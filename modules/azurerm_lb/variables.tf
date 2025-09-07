@@ -16,7 +16,7 @@ variable "rg_name" {
   
 }
 
-variable "frontend_pool_ip_name" {
+variable "frontend_ip_name" {
   description = "The name of the Frontend IP Configuration"
   type        = string
   default     = "PublicIPAddress"
@@ -31,8 +31,15 @@ variable "sku" {
   
 }
 
-variable "lb_pip2_name" {
+variable "lb_pip_name1" {
   description = "The name of the Public IP for the Load Balancer"
   type        = string
   
 }
+
+variable "vnet_name1" {
+  description = "The name of the Virtual Network"
+  type        = string
+  
+}
+

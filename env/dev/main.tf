@@ -1,27 +1,27 @@
 module "rg" {
   source   = "../../modules/azurerm_resource_group"
-  rg_name  = "LB_RG"
-  location = "East US"
+  rg_name  = "AKKC_LB_RG01"
+  location = "southeastasia"
 
 }
 
 module "vnet" {
   depends_on    = [module.rg]
   source        = "../../modules/azurerm_virtual_network"
-  vnet_name     = "LB_VNet"
-  rg_name       = "LB_RG"
-  location      = "East US"
+  vnet_name     = "AKKC_LB_VNet"
+  rg_name       = "AKKC_LB_RG01"
+  location      = "southeastasia"
   address_space = ["192.168.0.0/21"]
 }
 
 module "subnet" {
-  depends_on       = [module.rg, module.vnet]
-  source           = "../../modules/azurerm_subnet"
-  vnet_name        = "LB_VNet"
-  rg_name          = "LB_RG"
-  subnet1          = "LB-Subnet1"
-  subnet2          = "LB-Subnet2"
-  subnet3          = "AzureBastionSubnet"
+  depends_on = [module.rg, module.vnet]
+  source     = "../../modules/azurerm_subnet"
+  vnet_name  = "AKKC_LB_VNet"
+  rg_name    = "AKKC_LB_RG01"
+  subnet1    = "AKKC_LB-Subnet1"
+  subnet2    = "AKKC_LB-Subnet2"
+  #subnet3          = "AzureBastionSubnet"
   subnet1_prefixes = ["192.168.1.0/24"]
   subnet2_prefixes = ["192.168.2.0/24"]
   subnet3_prefixes = ["192.168.3.0/24"]
@@ -30,67 +30,127 @@ module "subnet" {
 module "pip" {
   depends_on        = [module.rg]
   source            = "../../modules/azurerm_public_ip"
-  rg_name           = "LB_RG"
-  location          = "East US"
-  bastion_pip1_name = "Bastion-PIP1"
-  lb_pip1_name      = "LB-PIP1"
+  rg_name           = "AKKC_LB_RG01"
+  location          = "southeastasia"
+  bastion_pip_name  = "AKKC_Bastion-PIP1"
+  lb_pip_name       = "AKKC_LB-PIP1"
   allocation_method = "Static"
   sku               = "Standard"
 }
 
+
 module "nic" {
-  depends_on        = [module.rg, module.subnet, module.pip]
-  source            = "../../modules/azurerm_network_interface"
-  rg_name           = "LB_RG"
-  location          = "East US"
-  bastion_nic_name  = "Bastion-NIC1"
-  lb_nic_name       = "LB-NIC1"
-  bastion_sub5      = "AzureBastionSubnet"
-  lb_sub6           = "LB-Subnet1"
-  vnet_name         = "LB_VNet"
-  bastion_pip1_name = "Bastion-PIP1"
-  lb_pip1_name      = "LB-PIP1"
+  depends_on   = [module.rg, module.subnet]
+  source       = "../../modules/azurerm_nic"
+  rg_name      = "AKKC_LB_RG01"
+  location     = "southeastasia"
+  vm1_nic_name = "AKKC_VM1-NIC"
+  vm2_nic_name = "AKKC_VM2-NIC"
+  vm_sub       = "AKKC_LB-Subnet1"
+  vnet_name    = "AKKC_LB_VNet"
+
 }
 
 module "nsg" {
   depends_on = [module.rg]
   source     = "../../modules/azurerm_nsg"
-  nsg_name   = "LB-NSG"
-  rg_name    = "LB_RG"
-  location   = "East US"
+  nsg_name   = "AKKC_LB-NSG"
+  rg_name    = "AKKC_LB_RG01"
+  location   = "southeastasia"
 }
 
 module "nic_nsg_assoc" {
-  depends_on       = [module.rg, module.nic, module.nsg]
-  source           = "../../modules/azurerm_nic_nsg_association"
-  rg_name          = "LB_RG"
-  bastion_nic_name = "Bastion-NIC1"
-  lb_nic_name      = "LB-NIC1"
-  nsg_name         = "LB-NSG"
-  
+  depends_on   = [module.rg, module.nic, module.nsg]
+  source       = "../../modules/azurerm_nic_nsg_association"
+  rg_name      = "AKKC_LB_RG01"
+  vnet_name    = "AKKC_LB_VNet"
+  nsg_name     = "AKKC_LB-NSG"
+  vm1_nic_name = "AKKC_VM1-NIC"
+  vm2_nic_name = "AKKC_VM2-NIC"
+  #bastion_subnet_name = "AzureBastionSubnet"
+  subnet_name = "AKKC_LB-Subnet1"
 }
 
-
-module "bastion" {
-  depends_on       = [module.rg, module.subnet, module.pip, module.nic]
-  source           = "../../modules/azurerm_bastion_host"
-  rg_name          = "LB_RG"
-  location         = "East US"
-  bastion_name     = "My-Bastion"
-  vnet_name        = "LB_VNet"
-  bastion_sub4     = "AzureBastionSubnet"
-  bastion_pip2_name = "Bastion-PIP1"
-  
-}
 
 module "lb" {
-  depends_on                = [module.rg, module.subnet, module.pip]
-  source                    = "../../modules/azurerm_lb"
-  rg_name                   = "LB_RG"
-  location                  = "East US"
-  lb_name                   = "My-LB"
-  sku                       = "Standard"
-  frontend_pool_ip_name     = "LB-FrontendIPConfig"
-  lb_pip2_name              = "LB-PIP1"
-  
+  depends_on       = [module.rg, module.subnet, module.pip, module.nic, module.nsg, module.nic_nsg_assoc]
+  source           = "../../modules/azurerm_lb"
+  rg_name          = "AKKC_LB_RG01"
+  location         = "southeastasia"
+  lb_name          = "AKKC_MY-LB"
+  sku              = "Standard"
+  frontend_ip_name = "LB-FrontendIPConfig"
+  lb_pip_name1     = "AKKC_LB-PIP1"
+  vnet_name1       = "AKKC_LB_VNet"
 }
+
+
+module "bepool" {
+  depends_on        = [module.lb]
+  source            = "../../modules/azurerm_lb_backend_pool"
+  lb_name           = "AKKC_MY-LB"
+  rg_name           = "AKKC_LB_RG01"
+  #vnet_name        = "AKKC_LB_VNet"
+  backend_pool_name = "LB-BackendPool"
+
+}
+
+module "lb_probe" {
+  depends_on        = [module.lb]
+  source            = "../../modules/azurerm_lb_probe"
+  lb_name           = "AKKC_MY-LB"
+rg_name          = "AKKC_LB_RG01"
+  health_probe_name = "LB-HealthProbe"
+}
+
+module "lb_rule" {
+  depends_on        = [module.lb, module.lb_probe]
+  source            = "../../modules/azurerm_lb_rule"
+  lb_name           = "AKKC_MY-LB"
+  rg_name          = "AKKC_LB_RG01"
+  lb_rule_name      = "LB-HTTPRule"
+  frontend_ip_name  = "LB-FrontendIPConfig"
+  backend_pool_name = "LB-BackendPool"
+  lbprobe_id        = module.lb_probe.probe_id
+}
+
+module "nic_lb_bepool_asso" {
+  depends_on            = [module.rg, module.nic, module.lb, module.bepool, module.lb_probe, module.lb_rule]
+  source                = "../../modules/azurerm_nic_lb_bepool_association"
+  vm1_nic_name          = "AKKC_VM1-NIC"
+  vm2_nic_name          = "AKKC_VM2-NIC"
+  rg_name               = "AKKC_LB_RG01"
+  backend_pool_name     = "LB-BackendPool"
+  lb_name               = "AKKC_MY-LB"
+  ip_configuration_name = "vm-prvate_ip-config"
+
+}
+
+
+module "vm1" {
+  source         = "../../modules/azurerm_linux_virtual_machine"
+  depends_on     = [module.rg, module.nic]
+  rg_name        = "AKKC_LB_RG01"
+  location       = "southeastasia"
+  vm_name        = "AKKCVM1"
+  vm_size        = "Standard_F2"
+  admin_username = "akkc"
+  admin_password = "Devops@12345"
+  vm_nic_name    = "AKKC_VM1-NIC"
+
+}
+
+
+module "vm2" {
+  source         = "../../modules/azurerm_linux_virtual_machine"
+  depends_on     = [module.rg, module.nic]
+  rg_name        = "AKKC_LB_RG01"
+  location       = "southeastasia"
+  vm_name        = "AKKCVM2"
+  vm_size        = "Standard_F2"
+  admin_username = "akkc"
+  admin_password = "Devops@12345"
+  vm_nic_name    = "AKKC_VM2-NIC"
+
+}
+

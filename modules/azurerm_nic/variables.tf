@@ -1,4 +1,4 @@
-variable "bastion_nic_name" {
+variable "vm1_nic_name" {
   description = "The name of the network interface"
   type        = string
   
@@ -17,12 +17,8 @@ variable "location" {
   
 }
 
-variable "bastion_sub5" {
-  description = "The name of the subnet where the NIC will be deployed"
-  type        = string
-  
-}
-variable "lb_sub6" {
+
+variable "vm_sub" {
   description = "The name of the subnet where the NIC will be deployed"
   type        = string
   
@@ -34,20 +30,9 @@ variable "vnet_name" {
   
 }
 
-variable "lb_nic_name" {
+variable "vm2_nic_name" {
   description = "The name of the load balancer network interface"
   type        = string
   
 }
 
-variable "bastion_pip1_name" {
-  description = "The name of the bastion public IP"
-  type        = string
-  
-}
-
-variable "lb_pip1_name" {
-  description = "The name of the load balancer public IP"
-  type        = string
-  
-}

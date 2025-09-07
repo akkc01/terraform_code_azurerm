@@ -1,36 +1,38 @@
-variable "lb_rule_name" {
-  description = "The name of the Load Balancer Rule"
+variable "lb_name" {
+  description = "The name of the Load Balancer"
   type        = string
-  default     = "HTTPRule"
   
 }
 
-variable "frontend_pool_ip_name" {
+variable "rg_name" {
+  description = "The name of the resource group"
+  type        = string
+  
+}
+
+variable "frontend_ip_name" {
   description = "The name of the Frontend IP Configuration"
   type        = string
   default     = "PublicIPAddress"
   
 }
- variable "probe_id" {
-  description = "The ID of the Health Probe"
-  type        = string
-   
- }
-variable "lb_name" {
-  type = string 
-  
-}
 
-variable "rg_name" {
-  type = string 
-  
-}
 variable "backend_pool_name" {
-  type = string 
+  description = "The name of the Backend Address Pool"
+  type        = string
+  default     = "BackendPool1"
   
 }
 
-variable "probe_name" {
-  type = string
+variable "lb_rule_name" {
+  description = "The name of the Load Balancer Rule"
+  type        = string
+  default     = "HTTPRule1"
+
+}
+
+
+variable "lbprobe_id" {
   
 }
+

@@ -1,4 +1,4 @@
-variable "bastion_pip1_name" {
+variable "bastion_pip_name" {
   description = "The name of the Public IP"
   type        = string
   
@@ -29,7 +29,7 @@ variable "sku" {
   
 }
 
-variable "lb_pip1_name" {
+variable "lb_pip_name" {
   description = "The name of the Public IP for the Load Balancer"
   type        = string
   

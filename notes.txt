@@ -1,0 +1,30 @@
+Yes — Even if the Load Balancer (LB) has only a Public IP, it will still forward traffic to 
+the backend VMs using their Private IPs.
+
+Azure Load Balancer (azurerm_lb)
+
+❌ You do NOT need to create a NIC for the Load Balancer, it create itself.
+
+
+Azure Bastion (azurerm_bastion_host)
+
+❌ You do NOT manually create NICs for Azure Bastion.
+
+✅ when you error got, resource not found, check resources dependancy.
+
+#------------------------------------------------------------------------------------------------------
+# azurerm_lb_bepool_ip_address_association---
+ye hum define karte hn ki kain kaun si ip address ko use karni hai backend pool me
+
+# abhi hum iska use nhi karenge, becose we are using azurerm_network_interface_backend_address_pool_association
+# to definre the association between NIC and LB backend pool
+
+resource "azurerm_lb_backend_address_pool_address" "example" {
+  name                    = "example"
+  backend_address_pool_id = data.azurerm_lb_backend_address_pool.example.id
+  virtual_network_id      = data.azurerm_virtual_network.example.id
+  ip_address              = "10.0.0.1"
+}
+
+
+#--------------------------------------------------------------------------------------------------------

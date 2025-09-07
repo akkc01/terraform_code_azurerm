@@ -1,15 +1,9 @@
-data "azurerm_lb" "lb4" {
+data "azurerm_lb" "lb" {
   name                = var.lb_name
   resource_group_name = var.rg_name
 }
 
-
-data "azurerm_lb_backend_address_pool" "bepool2" {
+data "azurerm_lb_backend_address_pool" "bepool" {
   name            = var.backend_pool_name
-  loadbalancer_id = data.azurerm_lb.lb4.id
-}
-
-data "azurerm_lb_probe" "lbprobe1" {
-  name            = var.probe_name
-  loadbalancer_id = data.azurerm_lb.lb4.id
+  loadbalancer_id = data.azurerm_lb.lb.id
 }

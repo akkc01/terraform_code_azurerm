@@ -10,9 +10,9 @@ variable "rg_name" {
   
 }
 
-variable "health_probe_name" {
-  description = "The name of the Health Probe"
-  type        = string
-  default     = "HealthProbe1"
+# variable "vnet_name" {
+#   description = "The name of the Virtual Network"
+#   type        = string
   
-}
+# }
+ variable "backend_pool_name" {}
