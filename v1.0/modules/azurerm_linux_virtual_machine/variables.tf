@@ -40,7 +40,3 @@ variable "vm_nic_name" {
   type        = string
   
 }
-
-variable "kv_name" {
-  
-}
