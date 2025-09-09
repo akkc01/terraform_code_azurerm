@@ -23,17 +23,6 @@ variable "vm_size" {
   default     = "Standard_F2"
   
 }
-variable "admin_username" {
-  description = "The admin username of the virtual machine"
-  type        = string
-  
-}
-
-variable "admin_password" {
-  description = "The admin password of the virtual machine"
-  type        = string
-  
-}
 
 variable "vm_nic_name" {
   description = "The name of the VM network interface"
@@ -41,6 +30,6 @@ variable "vm_nic_name" {
   
 }
 
-variable "kv_name" {
-  
-}
+variable "kv_name" {}
+variable "vmuser" {}
+variable "vmpass" {}

@@ -86,10 +86,10 @@ module "lb" {
 
 
 module "bepool" {
-  depends_on        = [module.lb]
-  source            = "../../modules/azurerm_lb_backend_pool"
-  lb_name           = "AKKC_MY-LB"
-  rg_name           = "AKKC_LB_RG01"
+  depends_on = [module.lb]
+  source     = "../../modules/azurerm_lb_backend_pool"
+  lb_name    = "AKKC_MY-LB"
+  rg_name    = "AKKC_LB_RG01"
   #vnet_name        = "AKKC_LB_VNet"
   backend_pool_name = "LB-BackendPool"
 
@@ -99,15 +99,15 @@ module "lb_probe" {
   depends_on        = [module.lb]
   source            = "../../modules/azurerm_lb_probe"
   lb_name           = "AKKC_MY-LB"
-rg_name          = "AKKC_LB_RG01"
+  rg_name           = "AKKC_LB_RG01"
   health_probe_name = "LB-HealthProbe"
 }
 
 module "lb_rule" {
-  depends_on        = [module.lb, module.lb_probe]
+  depends_on        = [module.lb, module.lb_probe, module.bepool]
   source            = "../../modules/azurerm_lb_rule"
   lb_name           = "AKKC_MY-LB"
-  rg_name          = "AKKC_LB_RG01"
+  rg_name           = "AKKC_LB_RG01"
   lb_rule_name      = "LB-HTTPRule"
   frontend_ip_name  = "LB-FrontendIPConfig"
   backend_pool_name = "LB-BackendPool"
@@ -126,31 +126,51 @@ module "nic_lb_bepool_asso" {
 
 }
 
+module "kv" {
+  depends_on = [module.rg]
+  source     = "../../modules/azurerm_key_vault"
+  kv_name    = "AKKCKEYVAULT007"
+  rg_name    = "AKKC_LB_RG01"
+  location   = "southeastasia"
+}
+
+module "kvs" {
+  depends_on = [module.rg, module.kv]
+  source     = "../../modules/azurerm_key_vault_secrets"
+  kv_name    = "AKKCKEYVAULT007"
+  rg_name    = "AKKC_LB_RG01"
+  vm1user    = "vm1-admin-username"
+  vm2user    = "vm2-admin-username"
+  vm1pass    = "vm1-admin-secret"
+  vm2pass    = "vm2-admin-secret"
+
+}
+
 
 module "vm1" {
-  source         = "../../modules/azurerm_linux_virtual_machine"
-  depends_on     = [module.rg, module.nic]
-  rg_name        = "AKKC_LB_RG01"
-  location       = "southeastasia"
-  vm_name        = "AKKCVM1"
-  vm_size        = "Standard_F2"
-  admin_username = "akkc"
-  admin_password = "Devops@12345"
-  vm_nic_name    = "AKKC_VM1-NIC"
-
+  source      = "../../modules/azurerm_linux_virtual_machine"
+  depends_on  = [module.rg, module.nic, module.kv, module.kvs]
+  rg_name     = "AKKC_LB_RG01"
+  location    = "southeastasia"
+  vm_name     = "AKKCVM1"
+  vm_size     = "Standard_F2"
+  vm_nic_name = "AKKC_VM1-NIC"
+  kv_name     = "AKKCKEYVAULT007"
+  vmpass     = "vm1-admin-secret"
+  vmuser     = "vm1-admin-username"
 }
 
 
 module "vm2" {
   source         = "../../modules/azurerm_linux_virtual_machine"
-  depends_on     = [module.rg, module.nic]
-  rg_name        = "AKKC_LB_RG01"
-  location       = "southeastasia"
-  vm_name        = "AKKCVM2"
-  vm_size        = "Standard_F2"
-  admin_username = "akkc"
-  admin_password = "Devops@12345"
-  vm_nic_name    = "AKKC_VM2-NIC"
-
+  depends_on  = [module.rg, module.nic, module.kv, module.kvs]
+  rg_name     = "AKKC_LB_RG01"
+  location    = "southeastasia"
+  vm_name     = "AKKCVM2"
+  vm_size     = "Standard_F2"
+  vm_nic_name = "AKKC_VM2-NIC"
+  kv_name     = "AKKCKEYVAULT007"
+  vmpass     = "vm2-admin-secret"
+  vmuser     = "vm2-admin-username"
 }
 

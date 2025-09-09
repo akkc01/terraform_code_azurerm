@@ -9,21 +9,12 @@ data "azurerm_key_vault" "kv" {
 }
 
 data "azurerm_key_vault_secret" "vm_username1" {
-  name         = "vm1-admin-username"
+  name         = var.vmuser
   key_vault_id = data.azurerm_key_vault.kv.id
 }
 
 data "azurerm_key_vault_secret" "vm_password1" {
-  name         = "vm1-admin-secret"
+  name         = var.vmpass
   key_vault_id = data.azurerm_key_vault.kv.id
 }
 
-data "azurerm_key_vault_secret" "vm_username2" {
-  name         = "vm2-admin-username"
-  key_vault_id = data.azurerm_key_vault.kv.id
-}
-
-data "azurerm_key_vault_secret" "vm_password2" {
-  name         = "vm2-admin-secret"
-  key_vault_id = data.azurerm_key_vault.kv.id
-}
