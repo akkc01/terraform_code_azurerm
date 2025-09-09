@@ -1,10 +1,12 @@
 
-output "subnet" {
-  value = "Your first subnet is: - ${module.subnet.subnet1}, Your second subnet is: - ${module.subnet.subnet2}"
+output "SUBNETS" {
+  value = "Subnet1 : - ${module.subnet.subnet1}, Subnet2 : - ${module.subnet.subnet2}"
 }
 
-output "LoadBalencer_PIP" {
-  #value = azurerm_public_ip.lb_pip.ip_address
-  value = "Load Balencer IP is: - ${module.pip.LoadBalencer_PIP}"
+output "LOAD_BALENCER_Public_IP" {
+  value = module.pip.LoadBalencer_PIP
 }
 
+output "SQL_SERVER" {
+  value = module.sql_server.sql_server_name
+}

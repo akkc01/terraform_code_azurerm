@@ -1,18 +1,14 @@
 resource "azurerm_mssql_database" "example" {
-  name         = "example-db"
-  server_id    = azurerm_mssql_server.example.id
+  name         = var.db_name
+  server_id    = data.azurerm_mssql_server.sql.id
   collation    = "SQL_Latin1_General_CP1_CI_AS"
   license_type = "LicenseIncluded"
   max_size_gb  = 2
   sku_name     = "S0"
   enclave_type = "VBS"
 
-  tags = {
-    foo = "bar"
-  }
-
   # prevent the possibility of accidental data loss
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }

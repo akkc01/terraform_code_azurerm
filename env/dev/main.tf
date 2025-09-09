@@ -139,13 +139,21 @@ module "kvs" {
   source     = "../../modules/azurerm_key_vault_secrets"
   kv_name    = "AKKCKEYVAULT007"
   rg_name    = "AKKC_LB_RG01"
-  vm1user    = "vm1-admin-username"
-  vm2user    = "vm2-admin-username"
-  vm1pass    = "vm1-admin-secret"
-  vm2pass    = "vm2-admin-secret"
-
+  vm_secrets = {
+    vm1 = {
+      secret_name = "vm1-username"
+      secret_pass = "vm1-password"
+    }
+    vm2 = {
+      secret_name = "vm2-username"
+      secret_pass = "vm2-password"
+    }
+    sql = {
+      secret_name = "sql-username"
+      secret_pass = "sql-password"
+    }
+  }
 }
-
 
 module "vm1" {
   source      = "../../modules/azurerm_linux_virtual_machine"
@@ -156,13 +164,12 @@ module "vm1" {
   vm_size     = "Standard_F2"
   vm_nic_name = "AKKC_VM1-NIC"
   kv_name     = "AKKCKEYVAULT007"
-  vmpass     = "vm1-admin-secret"
-  vmuser     = "vm1-admin-username"
+  vmpass      = "vm1-password"
+  vmuser      = "vm1-username"
 }
 
-
 module "vm2" {
-  source         = "../../modules/azurerm_linux_virtual_machine"
+  source      = "../../modules/azurerm_linux_virtual_machine"
   depends_on  = [module.rg, module.nic, module.kv, module.kvs]
   rg_name     = "AKKC_LB_RG01"
   location    = "southeastasia"
@@ -170,7 +177,27 @@ module "vm2" {
   vm_size     = "Standard_F2"
   vm_nic_name = "AKKC_VM2-NIC"
   kv_name     = "AKKCKEYVAULT007"
-  vmpass     = "vm2-admin-secret"
-  vmuser     = "vm2-admin-username"
+  vmpass      = "vm2-password"
+  vmuser      = "vm2-username"
 }
 
+module "sql_server" {
+  depends_on      = [module.rg, module.kv, module.kvs]
+  source          = "../../modules/azurerm_mssql_server"
+  sql_server_name = "akkcsqlserver007"
+  rg_name         = "AKKC_LB_RG01"
+  location        = "southeastasia"
+  sql_user        = "sql-username"
+  sql_pass        = "S3cure!P@ssw0rd12"
+
+}
+
+module "sql_db" {
+  depends_on      = [module.rg, module.kv, module.kvs, module.sql_server]
+  source          = "../../modules/azurerm_mssql_database"
+  db_name         = "courses"
+  sql_server_name = "akkcsqlserver007"
+  rg_name         = "AKKC_LB_RG01"
+
+
+}

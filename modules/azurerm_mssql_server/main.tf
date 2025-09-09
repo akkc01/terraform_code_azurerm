@@ -1,18 +1,10 @@
-resource "azurerm_mssql_server" "example" {
-  name                         = "mssqlserver"
-  resource_group_name          = azurerm_resource_group.example.name
-  location                     = azurerm_resource_group.example.location
+resource "azurerm_mssql_server" "sql" {
+  name                         = var.sql_server_name
+  resource_group_name          = var.rg_name
+  location                     = var.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "thisIsKat11"
+  administrator_login          = var.sql_user
+  administrator_login_password = var.sql_pass
   minimum_tls_version          = "1.2"
-
-  azuread_administrator {
-    login_username = "AzureAD Admin"
-    object_id      = "00000000-0000-0000-0000-000000000000"
-  }
-
-  tags = {
-    environment = "production"
-  }
 }
+
