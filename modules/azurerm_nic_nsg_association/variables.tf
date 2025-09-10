@@ -29,3 +29,4 @@ variable "vnet_name" {
   
 }
 variable "subnet_name" {}
+variable "appgw_subnet_name" {}

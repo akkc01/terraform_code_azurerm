@@ -10,3 +10,6 @@ variable "backend_address_pool_name"{}
 variable "http_setting_name" {}
 variable "http_listener_name" {}
 variable "request_routing_rule_name" {}
+variable "vm1_nic_name" {}
+variable "vm2_nic_name" {}
+variable "healthProbe" {}

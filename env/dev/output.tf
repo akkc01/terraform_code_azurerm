@@ -8,7 +8,7 @@ output "SUBNETS" {
 # }
 
 output "App_Gateway_Public_IP" {
-  value = module.pip.LoadBalencer_PIP
+  value = module.pip.appgw_pip
 }
 
 output "SQL_SERVER" {

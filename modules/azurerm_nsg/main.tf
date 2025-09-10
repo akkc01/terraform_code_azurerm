@@ -50,7 +50,17 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "Internet"
   }
-
+  security_rule {
+    name                       = "Allow-AppGW-Infrastructure"
+    priority                   = 105
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "65200-65535"   # ✅ Singular key
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "VirtualNetwork"
+  }
 
 }
 

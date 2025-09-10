@@ -30,12 +30,13 @@ module "subnet" {
 }
 
 module "pip" {
-  depends_on        = [module.rg]
-  source            = "../../modules/azurerm_public_ip"
-  rg_name           = "AKKC_LB_RG01"
-  location          = "southeastasia"
-  bastion_pip_name  = "AKKC_Bastion-PIP1"
-  lb_pip_name       = "AKKC_LB-PIP1"
+  depends_on = [module.rg]
+  source     = "../../modules/azurerm_public_ip"
+  rg_name    = "AKKC_LB_RG01"
+  location   = "southeastasia"
+  #bastion_pip_name  = "AKKC_Bastion-PIP1"
+  #lb_pip_name       = "AKKC_LB-PIP1"
+  appgw_pip_name    = "akkcAppGwPIP"
   allocation_method = "Static"
   sku               = "Standard"
 }
@@ -50,7 +51,6 @@ module "nic" {
   vm2_nic_name = "AKKC_VM2-NIC"
   vm_sub       = "AKKC_LB-Subnet1"
   vnet_name    = "AKKC_LB_VNet"
-
 }
 
 module "nsg" {
@@ -71,6 +71,7 @@ module "nic_nsg_assoc" {
   vm2_nic_name = "AKKC_VM2-NIC"
   #bastion_subnet_name = "AzureBastionSubnet"
   subnet_name = "AKKC_LB-Subnet1"
+  appgw_subnet_name = "application-gateway-subnet"
 }
 
 
@@ -191,7 +192,6 @@ module "sql_server" {
   location        = "southeastasia"
   sql_user        = "sql-username"
   sql_pass        = "S3cure!P@ssw0rd12"
-
 }
 
 module "sql_db" {
@@ -200,8 +200,25 @@ module "sql_db" {
   db_name         = "courses"
   sql_server_name = "akkcsqlserver007"
   rg_name         = "AKKC_LB_RG01"
-
-
 }
 
+module "appgw" {
+  depends_on                     = [module.rg, module.vnet, module.subnet, module.pip, module.vm1, module.vm2]
+  source                         = "../../modules/azurerm_application_gateway"
+  appgw_name                     = "akkcappgw007"
+  appgw_pip_name                 = "akkcAppGwPIP"
+  rg_name                        = "AKKC_LB_RG01"
+  location                       = "southeastasia"
+  vnet_name                      = "AKKC_LB_VNet"
+  subnet                         = "application-gateway-subnet"
+  frontend_port_name             = "frontendPort"
+  frontend_ip_configuration_name = "frontendIP"
+  backend_address_pool_name      = "backendPool"
+  http_setting_name              = "httpSettings"
+  http_listener_name             = "httpListener"
+  request_routing_rule_name      = "RRRule1"
+  vm1_nic_name                   = "AKKC_VM1-NIC"
+  vm2_nic_name                   = "AKKC_VM2-NIC"
+  healthProbe                    = "appgw-health-probe"
+}
 
