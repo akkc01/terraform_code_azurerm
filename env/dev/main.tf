@@ -22,9 +22,11 @@ module "subnet" {
   subnet1    = "AKKC_LB-Subnet1"
   subnet2    = "AKKC_LB-Subnet2"
   #subnet3          = "AzureBastionSubnet"
+  subnet4          = "application-gateway-subnet"
   subnet1_prefixes = ["192.168.1.0/24"]
   subnet2_prefixes = ["192.168.2.0/24"]
-  subnet3_prefixes = ["192.168.3.0/24"]
+  #subnet3_prefixes = ["192.168.3.0/24"]
+  subnet4_prefixes = ["192.168.4.0/24"]
 }
 
 module "pip" {
@@ -72,59 +74,59 @@ module "nic_nsg_assoc" {
 }
 
 
-module "lb" {
-  depends_on       = [module.rg, module.subnet, module.pip, module.nic, module.nsg, module.nic_nsg_assoc]
-  source           = "../../modules/azurerm_lb"
-  rg_name          = "AKKC_LB_RG01"
-  location         = "southeastasia"
-  lb_name          = "AKKC_MY-LB"
-  sku              = "Standard"
-  frontend_ip_name = "LB-FrontendIPConfig"
-  lb_pip_name1     = "AKKC_LB-PIP1"
-  vnet_name1       = "AKKC_LB_VNet"
-}
+# module "lb" {
+#   depends_on       = [module.rg, module.subnet, module.pip, module.nic, module.nsg, module.nic_nsg_assoc]
+#   source           = "../../modules/azurerm_lb"
+#   rg_name          = "AKKC_LB_RG01"
+#   location         = "southeastasia"
+#   lb_name          = "AKKC_MY-LB"
+#   sku              = "Standard"
+#   frontend_ip_name = "LB-FrontendIPConfig"
+#   lb_pip_name1     = "AKKC_LB-PIP1"
+#   vnet_name1       = "AKKC_LB_VNet"
+# }
 
 
-module "bepool" {
-  depends_on = [module.lb]
-  source     = "../../modules/azurerm_lb_backend_pool"
-  lb_name    = "AKKC_MY-LB"
-  rg_name    = "AKKC_LB_RG01"
-  #vnet_name        = "AKKC_LB_VNet"
-  backend_pool_name = "LB-BackendPool"
+# module "bepool" {
+#   depends_on = [module.lb]
+#   source     = "../../modules/azurerm_lb_backend_pool"
+#   lb_name    = "AKKC_MY-LB"
+#   rg_name    = "AKKC_LB_RG01"
+#   #vnet_name        = "AKKC_LB_VNet"
+#   backend_pool_name = "LB-BackendPool"
 
-}
+# }
 
-module "lb_probe" {
-  depends_on        = [module.lb]
-  source            = "../../modules/azurerm_lb_probe"
-  lb_name           = "AKKC_MY-LB"
-  rg_name           = "AKKC_LB_RG01"
-  health_probe_name = "LB-HealthProbe"
-}
+# module "lb_probe" {
+#   depends_on        = [module.lb]
+#   source            = "../../modules/azurerm_lb_probe"
+#   lb_name           = "AKKC_MY-LB"
+#   rg_name           = "AKKC_LB_RG01"
+#   health_probe_name = "LB-HealthProbe"
+# }
 
-module "lb_rule" {
-  depends_on        = [module.lb, module.lb_probe, module.bepool]
-  source            = "../../modules/azurerm_lb_rule"
-  lb_name           = "AKKC_MY-LB"
-  rg_name           = "AKKC_LB_RG01"
-  lb_rule_name      = "LB-HTTPRule"
-  frontend_ip_name  = "LB-FrontendIPConfig"
-  backend_pool_name = "LB-BackendPool"
-  lbprobe_id        = module.lb_probe.probe_id
-}
+# module "lb_rule" {
+#   depends_on        = [module.lb, module.lb_probe, module.bepool]
+#   source            = "../../modules/azurerm_lb_rule"
+#   lb_name           = "AKKC_MY-LB"
+#   rg_name           = "AKKC_LB_RG01"
+#   lb_rule_name      = "LB-HTTPRule"
+#   frontend_ip_name  = "LB-FrontendIPConfig"
+#   backend_pool_name = "LB-BackendPool"
+#   lbprobe_id        = module.lb_probe.probe_id
+# }
 
-module "nic_lb_bepool_asso" {
-  depends_on            = [module.rg, module.nic, module.lb, module.bepool, module.lb_probe, module.lb_rule]
-  source                = "../../modules/azurerm_nic_lb_bepool_association"
-  vm1_nic_name          = "AKKC_VM1-NIC"
-  vm2_nic_name          = "AKKC_VM2-NIC"
-  rg_name               = "AKKC_LB_RG01"
-  backend_pool_name     = "LB-BackendPool"
-  lb_name               = "AKKC_MY-LB"
-  ip_configuration_name = "vm-prvate_ip-config"
+# module "nic_lb_bepool_asso" {
+#   depends_on            = [module.rg, module.nic, module.lb, module.bepool, module.lb_probe, module.lb_rule]
+#   source                = "../../modules/azurerm_nic_lb_bepool_association"
+#   vm1_nic_name          = "AKKC_VM1-NIC"
+#   vm2_nic_name          = "AKKC_VM2-NIC"
+#   rg_name               = "AKKC_LB_RG01"
+#   backend_pool_name     = "LB-BackendPool"
+#   lb_name               = "AKKC_MY-LB"
+#   ip_configuration_name = "vm-prvate_ip-config"
 
-}
+# }
 
 module "kv" {
   depends_on = [module.rg]
@@ -201,3 +203,5 @@ module "sql_db" {
 
 
 }
+
+

@@ -22,9 +22,3 @@ resource "azurerm_subnet" "sub2" {
 #   address_prefixes     = var.subnet3_prefixes
 # }
 
-resource "azurerm_subnet" "appgw_subnet" {
-  name                 = var.subnet4
-  resource_group_name  = var.rg_name
-  virtual_network_name = var.vnet_name
-  address_prefixes     = var.subnet4_prefixes
-}

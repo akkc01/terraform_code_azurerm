@@ -1,9 +1,13 @@
 
 output "SUBNETS" {
-  value = "Subnet1 : - ${module.subnet.subnet1}, Subnet2 : - ${module.subnet.subnet2}"
+  value = "Subnet1 : - ${module.subnet.subnet1}, Subnet2 : - ${module.subnet.subnet2}, AppGwSub : - ${module.subnet.subnet4}"
 }
 
-output "LOAD_BALENCER_Public_IP" {
+# output "LOAD_BALENCER_Public_IP" {
+#   value = module.pip.LoadBalencer_PIP
+# }
+
+output "App_Gateway_Public_IP" {
   value = module.pip.LoadBalencer_PIP
 }
 

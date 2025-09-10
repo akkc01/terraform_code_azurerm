@@ -47,11 +47,3 @@ variable "subnet3" {
 #   type        = list(string)
    
 # }
-
-variable "subnet4_prefixes" {
-  description = "The address prefixes for the subnet for Azure Bastion"
-  type        = list(string)
-   
-}
-
-variable "subnet4" {}

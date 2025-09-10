@@ -1,8 +1,8 @@
-# variable "bastion_pip_name" {
-#   description = "The name of the Public IP"
-#   type        = string
+variable "bastion_pip_name" {
+  description = "The name of the Public IP"
+  type        = string
   
-# }
+}
 
 variable "rg_name" {
   description = "The name of the Resource Group in which to create the Public IP"
@@ -29,13 +29,7 @@ variable "sku" {
   
 }
 
-# variable "lb_pip_name" {
-#   description = "The name of the Public IP for the Load Balancer"
-#   type        = string
-  
-# }
-
-variable "appgw_pip_name" {
+variable "lb_pip_name" {
   description = "The name of the Public IP for the Load Balancer"
   type        = string
   
