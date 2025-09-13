@@ -20,60 +20,79 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-    name = var.frontend_port_name # "frontendPort"
+    name = var.frontend_port_name 
     port = 80
   }
 
   frontend_ip_configuration {
-    name                 = var.frontend_ip_configuration_name # "frontendIP"
+    name                 = var.frontend_ip_configuration_name 
     public_ip_address_id = data.azurerm_public_ip.appgw_pip.id
   }
 
   backend_address_pool {
-    name         = var.backend_address_pool_name #"backendPool"
-    #ip_addresses = [data.azurerm_network_interface.nic1.private_ip_address, data.azurerm_network_interface.nic2.private_ip_address]
+    name         = var.backend_address_pool_name1 
+     # address ya VMSS id yahan specify karni padegi (agar dynamic ho to via backend_address)
   }
-
-probe {
-  name        = var.healthProbe
-  protocol    = "Http"
-  path        = "/"
-  interval    = 30
-  timeout     = 30
-  unhealthy_threshold = 3
-  pick_host_name_from_backend_http_settings = true  # ✅ Set to true
-  # host = "" → ❌ Remove this
-
-  match {
-    status_code = [200]
+# # for second website hosting-------------------
+  backend_address_pool {
+    name         = var.backend_address_pool_name2 
+    # address ya VMSS id yahan specify karni padegi (agar dynamic ho to via backend_address)
   }
-}
 
   backend_http_settings {
-    name                                = var.http_setting_name
+    name                                = var.http_setting_name1
     protocol                            = "Http"
     port                                = 80
     cookie_based_affinity               = "Disabled"
     request_timeout                     = 30
-    probe_name                          = var.healthProbe
-    pick_host_name_from_backend_address = true
-    # Remove or don't define host_name
+  }
+# for second website hosting-------------------
+  backend_http_settings {
+    name                                = var.http_setting_name2
+    protocol                            = "Http"
+    port                                = 80
+    cookie_based_affinity               = "Disabled"
+    request_timeout                     = 30
   }
 
+
+
+
+
   http_listener {
-    name                           = var.http_listener_name #  "httpListener"
+    name                           = var.http_listener_name1 
     frontend_ip_configuration_name = var.frontend_ip_configuration_name
     frontend_port_name             = var.frontend_port_name
     protocol                       = "Http"
+    #host_name                      = "site1.example.com"  # 👈 Yeh multi-site banata hai
+  }
+
+# for second website hosting-------------------
+  http_listener {
+    name                           = var.http_listener_name2 
+    frontend_ip_configuration_name = var.frontend_ip_configuration_name
+    frontend_port_name             = var.frontend_port_name
+    protocol                       = "Http"
+    #host_name                      = "site1.example.com"  # 👈 Yeh multi-site banata hai
   }
 
 request_routing_rule {
-  name                       = var.request_routing_rule_name
+  name                       = var.request_routing_rule_name1
   rule_type                  = "Basic"
-  http_listener_name         = var.http_listener_name
-  backend_address_pool_name  = var.backend_address_pool_name
-  backend_http_settings_name = var.http_setting_name
-  priority                   = 100  # ✅ Add this line
-
+  http_listener_name         = var.http_listener_name1
+  backend_address_pool_name  = var.backend_address_pool_name1
+  backend_http_settings_name = var.http_setting_name1
+  priority                   = 10  
 }
+
+## for second website hosting-------------------
+request_routing_rule {
+  name                       = var.request_routing_rule_name2
+  rule_type                  = "Basic"
+  http_listener_name         = var.http_listener_name2
+  backend_address_pool_name  = var.backend_address_pool_name2
+  backend_http_settings_name = var.http_setting_name2
+  priority                   = 12  
+}
+
 }

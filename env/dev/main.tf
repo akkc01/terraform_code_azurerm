@@ -49,11 +49,11 @@ module "nsg" {
 }
 
 module "sub_nsg_assoc" {
-  depends_on   = [module.rg, module.vnet, module.subnet, module.nsg]
-  source       = "../../modules/azurerm_subnet_nsg_association"
-  rg_name      = "AKKC_LB_RG01"
-  vnet_name    = "AKKC_LB_VNet"
-  nsg_name     = "AKKC_LB-NSG"
+  depends_on        = [module.rg, module.vnet, module.subnet, module.nsg]
+  source            = "../../modules/azurerm_subnet_nsg_association"
+  rg_name           = "AKKC_LB_RG01"
+  vnet_name         = "AKKC_LB_VNet"
+  nsg_name          = "AKKC_LB-NSG"
   appgw_subnet_name = "application-gateway-subnet"
 }
 
@@ -117,19 +117,24 @@ module "appgw" {
   subnet                         = "application-gateway-subnet"
   frontend_port_name             = "frontendPort"
   frontend_ip_configuration_name = "frontendIP"
-  backend_address_pool_name      = "backendPool"
-  http_setting_name              = "httpSettings"
-  http_listener_name             = "httpListener"
-  request_routing_rule_name      = "RRRule1"
-  vm1_nic_name                   = "AKKC_VM1-NIC"
-  vm2_nic_name                   = "AKKC_VM2-NIC"
-  healthProbe                    = "appgw-health-probe"
+  backend_address_pool_name1     = "backendPool1"
+  http_setting_name1             = "httpSettings1"
+  http_listener_name1            = "httpListener1"
+  request_routing_rule_name1     = "RRRule1"
+  backend_address_pool_name2     = "backendPool2"
+  http_setting_name2             = "httpSettings2"
+  http_listener_name2            = "httpListener2"
+  request_routing_rule_name2     = "RRRule2"
+  # vm1_nic_name                   = "AKKC_VM1-NIC"
+  # vm2_nic_name                   = "AKKC_VM2-NIC"
+
+
 }
 
-module "vmss" {
+module "vmss1" {
   depends_on        = [module.rg, module.vnet, module.subnet, module.nsg, module.kvs, module.appgw]
   source            = "../../modules/azurerm_linux_virtual_machine_scale_set"
-  vmss_name         = "AKKC-VMSS"
+  vmss_name         = "AKKC-VMSS-2"
   rg_name           = "AKKC_LB_RG01"
   location          = "southeastasia"
   sku               = "Standard_F2"
@@ -137,12 +142,28 @@ module "vmss" {
   admin_password    = "vm1-username"
   vnet_name         = "AKKC_LB_VNet"
   vmss_sub          = "AKKC_LB-Subnet2"
-  backend_pool_name = "backendPool"
+  backend_pool_name = "backendPool1"
   nsg_name          = "AKKC_LB-NSG"
   appgw_name        = "akkcappgw007"
   kv_name           = "AKKCKEYVAULT007"
   autoscale_name    = "vmssAutoScale"
 }
 
-
+module "vmss2" {
+  depends_on        = [module.rg, module.vnet, module.subnet, module.nsg, module.kvs, module.appgw]
+  source            = "../../modules/azurerm_linux_virtual_machine_scale_set"
+  vmss_name         = "AKKC-VMSS-2"
+  rg_name           = "AKKC_LB_RG01"
+  location          = "southeastasia"
+  sku               = "Standard_F2"
+  admin_username    = "vm2-password"
+  admin_password    = "vm2-username"
+  vnet_name         = "AKKC_LB_VNet"
+  vmss_sub          = "AKKC_LB-Subnet2"
+  backend_pool_name = "backendPool2"
+  nsg_name          = "AKKC_LB-NSG"
+  appgw_name        = "akkcappgw007"
+  kv_name           = "AKKCKEYVAULT007"
+  autoscale_name    = "vmssAutoScale"
+}
 
