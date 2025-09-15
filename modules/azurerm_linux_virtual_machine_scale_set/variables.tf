@@ -22,13 +22,13 @@ variable "sku" {
 
 }
 
-variable "admin_username" {
+variable "admin-username" {
   description = "The admin username for the Virtual Machine Scale Set"
   type        = string
 
 }
 
-variable "admin_password" {
+variable "admin-password" {
   description = "The admin password for the Virtual Machine Scale Set"
   type        = string
 
@@ -45,8 +45,6 @@ variable "vmss_sub" {
 
 }
 
-
-
 variable "backend_pool_name" {
   description = "The name of the Backend Address Pool"
   type        = string
@@ -56,7 +54,6 @@ variable "backend_pool_name" {
 # variable "lb_name" {
 #   description = "The name of the Load Balancer"
 #   type        = string
-  
 # }
 
 variable "nsg_name" {

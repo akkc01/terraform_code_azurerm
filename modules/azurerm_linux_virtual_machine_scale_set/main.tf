@@ -4,8 +4,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss1" {
   location            = var.location
   sku                 = var.sku
   instances           = 1
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
+  admin_username      = data.azurerm_key_vault_secret.vm_username1.value
+  admin_password      = data.azurerm_key_vault_secret.vm_password1.value
 
   disable_password_authentication = false # Important for password-based login
 
@@ -30,11 +30,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss1" {
       primary                                = true
       subnet_id                              = data.azurerm_subnet.vmss_sub.id
       #load_balancer_backend_address_pool_ids = [data.azurerm_lb_backend_address_pool.bepool3.id]
-      application_gateway_backend_address_pool_ids = [data.azurerm_application_gateway.appgw.backend_address_pool[0].id, data.azurerm_application_gateway.appgw.backend_address_pool[1].id]
+      application_gateway_backend_address_pool_ids = [data.azurerm_application_gateway.appgw.backend_address_pool[0].id]
     }
     network_security_group_id = data.azurerm_network_security_group.nsg1.id
   }
-
   computer_name_prefix   = "vmss"
   overprovision          = true
   single_placement_group = true

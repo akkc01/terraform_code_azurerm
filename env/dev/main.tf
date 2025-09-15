@@ -15,27 +15,23 @@ module "vnet" {
 }
 
 module "subnet" {
-  depends_on = [module.rg, module.vnet]
-  source     = "../../modules/azurerm_subnet"
-  vnet_name  = "AKKC_LB_VNet"
-  rg_name    = "AKKC_LB_RG01"
-  subnet1    = "AKKC_LB-Subnet1"
-  subnet2    = "AKKC_LB-Subnet2"
-  #subnet3          = "AzureBastionSubnet"
+  depends_on       = [module.rg, module.vnet]
+  source           = "../../modules/azurerm_subnet"
+  vnet_name        = "AKKC_LB_VNet"
+  rg_name          = "AKKC_LB_RG01"
+  subnet1          = "AKKC_LB-Subnet1"
+  subnet2          = "AKKC_LB-Subnet2"
   subnet4          = "application-gateway-subnet"
   subnet1_prefixes = ["192.168.1.0/24"]
   subnet2_prefixes = ["192.168.2.0/24"]
-  #subnet3_prefixes = ["192.168.3.0/24"]
   subnet4_prefixes = ["192.168.4.0/24"]
 }
 
 module "pip" {
-  depends_on = [module.rg]
-  source     = "../../modules/azurerm_public_ip"
-  rg_name    = "AKKC_LB_RG01"
-  location   = "southeastasia"
-  #bastion_pip_name  = "AKKC_Bastion-PIP1"
-  #lb_pip_name       = "AKKC_LB-PIP1"
+  depends_on        = [module.rg]
+  source            = "../../modules/azurerm_public_ip"
+  rg_name           = "AKKC_LB_RG01"
+  location          = "southeastasia"
   appgw_pip_name    = "akkcAppGwPIP"
   allocation_method = "Static"
   sku               = "Standard"
@@ -61,26 +57,20 @@ module "sub_nsg_assoc" {
 
 module "kv" {
   depends_on = [module.rg]
-  source     = "../../modules/azurerm_key_vault"
-  kv_name    = "AKKCKEYVAULT007"
+  source     = "../../modules/azurerm_key_vault_and_secrets"
+  kv_name    = "akkckeyvault101"
   rg_name    = "AKKC_LB_RG01"
   location   = "southeastasia"
-}
-
-module "kvs" {
-  depends_on = [module.rg, module.kv]
-  source     = "../../modules/azurerm_key_vault_secrets"
-  kv_name    = "AKKCKEYVAULT007"
-  rg_name    = "AKKC_LB_RG01"
+  vm-password = "vm-password"
   vm_secrets = {
     vm1 = {
       secret_name = "vm1-username"
       secret_pass = "vm1-password"
     }
-    vm2 = {
-      secret_name = "vm2-username"
-      secret_pass = "vm2-password"
-    }
+    # vm2 = {
+    #   secret_name = "vm2-username"
+    #   secret_pass = "vm2-password"
+    # }
     sql = {
       secret_name = "sql-username"
       secret_pass = "sql-password"
@@ -94,8 +84,8 @@ module "sql_server" {
   sql_server_name = "akkcsqlserver007"
   rg_name         = "AKKC_LB_RG01"
   location        = "southeastasia"
-  sql_user        = "sql-username"
-  sql_pass        = "S3cure!P@ssw0rd12"
+  sql-user        = "sql-username"
+  sql-pass        = "sql-password"
 }
 
 module "sql_db" {
@@ -106,8 +96,9 @@ module "sql_db" {
   rg_name         = "AKKC_LB_RG01"
 }
 
+
 module "appgw" {
-  depends_on                     = [module.rg, module.vnet, module.subnet, module.pip]
+  depends_on                     = [module.rg, module.vnet, module.subnet, module.pip, module.kv]
   source                         = "../../modules/azurerm_application_gateway"
   appgw_name                     = "akkcappgw007"
   appgw_pip_name                 = "akkcAppGwPIP"
@@ -121,49 +112,26 @@ module "appgw" {
   http_setting_name1             = "httpSettings1"
   http_listener_name1            = "httpListener1"
   request_routing_rule_name1     = "RRRule1"
-  backend_address_pool_name2     = "backendPool2"
-  http_setting_name2             = "httpSettings2"
-  http_listener_name2            = "httpListener2"
-  request_routing_rule_name2     = "RRRule2"
-  # vm1_nic_name                   = "AKKC_VM1-NIC"
-  # vm2_nic_name                   = "AKKC_VM2-NIC"
-
 
 }
 
+
 module "vmss1" {
-  depends_on        = [module.rg, module.vnet, module.subnet, module.nsg, module.kvs, module.appgw]
+  depends_on        = [module.rg, module.vnet, module.subnet, module.nsg, module.kv, module.appgw]
   source            = "../../modules/azurerm_linux_virtual_machine_scale_set"
-  vmss_name         = "AKKC-VMSS-2"
+  vmss_name         = "AKKC_VMSS"
   rg_name           = "AKKC_LB_RG01"
   location          = "southeastasia"
   sku               = "Standard_F2"
-  admin_username    = "vm1-password"
-  admin_password    = "vm1-username"
+  admin-username    = "vm1-username"
+  admin-password    = "vm1-password"
   vnet_name         = "AKKC_LB_VNet"
   vmss_sub          = "AKKC_LB-Subnet2"
   backend_pool_name = "backendPool1"
   nsg_name          = "AKKC_LB-NSG"
   appgw_name        = "akkcappgw007"
-  kv_name           = "AKKCKEYVAULT007"
+  kv_name           = "akkckeyvault101"
   autoscale_name    = "vmssAutoScale"
 }
 
-module "vmss2" {
-  depends_on        = [module.rg, module.vnet, module.subnet, module.nsg, module.kvs, module.appgw]
-  source            = "../../modules/azurerm_linux_virtual_machine_scale_set"
-  vmss_name         = "AKKC-VMSS-2"
-  rg_name           = "AKKC_LB_RG01"
-  location          = "southeastasia"
-  sku               = "Standard_F2"
-  admin_username    = "vm2-password"
-  admin_password    = "vm2-username"
-  vnet_name         = "AKKC_LB_VNet"
-  vmss_sub          = "AKKC_LB-Subnet2"
-  backend_pool_name = "backendPool2"
-  nsg_name          = "AKKC_LB-NSG"
-  appgw_name        = "akkcappgw007"
-  kv_name           = "AKKCKEYVAULT007"
-  autoscale_name    = "vmssAutoScale"
-}
 

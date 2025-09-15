@@ -15,3 +15,13 @@ variable "kv_name" {
   type        = string
   
 }
+
+variable "vm_secrets" {
+  description = "Map of VM names to secret names"
+  type = map(object({
+    secret_name = string
+    secret_pass = string
+  }))
+}
+
+variable "vm-password" {}

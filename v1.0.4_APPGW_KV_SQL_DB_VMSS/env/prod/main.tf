@@ -21,10 +21,12 @@ module "subnet" {
   rg_name    = "PROD-LB-RG01"
   subnet1    = "PROD-LB-Subnet1"
   subnet2    = "PROD-LB-Subnet2"
+  subnet4 = ""
   #subnet3          = "AzureBastionSubnet"
   subnet1_prefixes = ["192.168.1.0/24"]
   subnet2_prefixes = ["192.168.2.0/24"]
-  subnet3_prefixes = ["192.168.3.0/24"]
+  #subnet3_prefixes = ["192.168.3.0/24"]
+  subnet4_prefixes = ""
 }
 
 module "pip" {
@@ -32,10 +34,9 @@ module "pip" {
   source            = "../../modules/azurerm_public_ip"
   rg_name           = "PROD-LB-RG01"
   location          = "northcentralus"
-  bastion_pip_name  = "PROD-Bastion-PIP1"
-  lb_pip_name       = "PROD-LB-PIP1"
   allocation_method = "Static"
   sku               = "Standard"
+  appgw_pip_name = ""
 }
 
 
