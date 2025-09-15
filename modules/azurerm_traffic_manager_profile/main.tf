@@ -22,6 +22,8 @@ resource "azurerm_traffic_manager_profile" "profile" {
     ttl           = 30
   }
 
+
+
   monitor_config {
     protocol                    = "HTTPS"
     port                        = 443
