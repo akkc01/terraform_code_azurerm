@@ -32,7 +32,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss1" {
       #load_balancer_backend_address_pool_ids = [data.azurerm_lb_backend_address_pool.bepool3.id]
       application_gateway_backend_address_pool_ids = [data.azurerm_application_gateway.appgw.backend_address_pool[0].id]
     }
-    network_security_group_id = data.azurerm_network_security_group.nsg1.id
+    # network_security_group_id = data.azurerm_network_security_group.nsg1.id
+    # here not use bcoz I have Alredy associated vmss subnet to nsg (Best Practice: Subnet-Level NSG Association)
   }
   computer_name_prefix   = "vmss"
   overprovision          = true

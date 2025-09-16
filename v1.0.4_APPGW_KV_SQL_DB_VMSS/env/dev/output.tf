@@ -11,6 +11,6 @@ output "App_Gateway_Public_IP" {
   value = module.pip.appgw_pip
 }
 
-output "SQL_SERVER" {
-  value = module.sql_server.sql_server_name
-}
+# output "SQL_SERVER" {
+#   value = module.sql_server.sql_server_name
+# }

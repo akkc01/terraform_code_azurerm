@@ -124,23 +124,23 @@ module "vm2" {
   vmuser      = "vm2-username"
 }
 
-# module "sql_server" {
-#   depends_on      = [module.rg, module.kv, module.kvs]
-#   source          = "../../modules/azurerm_mssql_server"
-#   sql_server_name = "akkcsqlserver007"
-#   rg_name         = "AKKC_LB_RG01"
-#   location        = "southeastasia"
-#   sql-user        = "sql-username"
-#   sql-pass        = "sql-password"
-# }
+module "sql_server" {
+  depends_on      = [module.rg, module.kv, module.kvs]
+  source          = "../../modules/azurerm_mssql_server"
+  sql_server_name = "akkcsqlserver007"
+  rg_name         = "AKKC_LB_RG01"
+  location        = "southeastasia"
+  sql-user        = "sql-username"
+  sql-pass        = "sql-password"
+}
 
-# module "sql_db" {
-#   depends_on      = [module.rg, module.kv, module.kvs, module.sql_server]
-#   source          = "../../modules/azurerm_mssql_database"
-#   db_name         = "courses"
-#   sql_server_name = "akkcsqlserver007"
-#   rg_name         = "AKKC_LB_RG01"
-# }
+module "sql_db" {
+  depends_on      = [module.rg, module.kv, module.kvs, module.sql_server]
+  source          = "../../modules/azurerm_mssql_database"
+  db_name         = "courses"
+  sql_server_name = "akkcsqlserver007"
+  rg_name         = "AKKC_LB_RG01"
+}
 
 module "appgw" {
   depends_on                     = [module.rg, module.vnet, module.subnet, module.pip, module.vm1, module.vm2]

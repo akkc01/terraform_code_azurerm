@@ -20,17 +20,17 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-    name = var.frontend_port_name 
+    name = var.frontend_port_name # "frontendPort"
     port = 80
   }
 
   frontend_ip_configuration {
-    name                 = var.frontend_ip_configuration_name 
+    name                 = var.frontend_ip_configuration_name # "frontendIP"
     public_ip_address_id = data.azurerm_public_ip.appgw_pip.id
   }
 
   backend_address_pool {
-    name         = var.backend_address_pool_name 
+    name         = var.backend_address_pool_name #"backendPool"
     ip_addresses = [data.azurerm_network_interface.nic1.private_ip_address, data.azurerm_network_interface.nic2.private_ip_address]
   }
 
@@ -41,8 +41,9 @@ probe {
   interval    = 30
   timeout     = 30
   unhealthy_threshold = 3
-  pick_host_name_from_backend_http_settings = true  #  Set to true
-  # host = "" →  Remove this
+  pick_host_name_from_backend_http_settings = true  # ✅ Set to true
+  # host = "" → ❌ Remove this
+
   match {
     status_code = [200]
   }
@@ -60,7 +61,7 @@ probe {
   }
 
   http_listener {
-    name                           = var.http_listener_name 
+    name                           = var.http_listener_name #  "httpListener"
     frontend_ip_configuration_name = var.frontend_ip_configuration_name
     frontend_port_name             = var.frontend_port_name
     protocol                       = "Http"
@@ -72,8 +73,7 @@ request_routing_rule {
   http_listener_name         = var.http_listener_name
   backend_address_pool_name  = var.backend_address_pool_name
   backend_http_settings_name = var.http_setting_name
-  priority                   = 11  
+  priority                   = 100  # ✅ Add this line
 
 }
 }
-
