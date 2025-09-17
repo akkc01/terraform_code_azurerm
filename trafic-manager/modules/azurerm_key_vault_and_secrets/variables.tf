@@ -23,5 +23,3 @@ variable "vm_secrets" {
     secret_pass = string
   }))
 }
-
-variable "vm-password" {}

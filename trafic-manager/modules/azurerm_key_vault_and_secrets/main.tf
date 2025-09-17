@@ -71,8 +71,3 @@ resource "azurerm_key_vault_secret" "passwords" {
   key_vault_id = azurerm_key_vault.kv.id
 }
 
-resource "azurerm_key_vault_secret" "vmpassword" {
-  name         = var.vm-password
-  value        = "Surveillance1@1840#25"
-  key_vault_id = azurerm_key_vault.kv.id
-}

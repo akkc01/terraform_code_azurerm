@@ -1,0 +1,65 @@
+🔍 Example Samjho:
+
+Tumhare paas 2 regions hain:
+
+📍 Region 1:
+
+VM1: sirf private IP
+
+Application Gateway 1 (AppGW1): Public IP ke sath
+
+Iske DNS naam hoga: appgw1-xyz-region1.cloudapp.azure.com
+
+Ye public hai → Internet se accessible
+
+📍 Region 2:
+
+VM2: sirf private IP
+
+Application Gateway 2 (AppGW2): Public IP ke sath
+
+DNS: appgw2-xyz-region2.cloudapp.azure.com
+
+🌐 Traffic Manager Setup:
+
+Traffic Manager Profile banaoge
+
+Usme 2 endpoints add karoge:
+
+appgw1-xyz-region1.cloudapp.azure.com
+
+appgw2-xyz-region2.cloudapp.azure.com
+
+Traffic Manager in dono endpoints pe traffic route karega, jaise:
+
+Priority based: Pehle Region 1 pe bheje, agar down ho to Region 2
+
+Performance based: User ke location ke hisab se route kare
+
+🧠 Iska Matlab:
+Resource	Banana padega?	Kyon?
+Application Gateway (x2)	✅ Haan	Kyunki tumhare VMs private IP pe hain, unhe expose karna padega
+Public IP (AppGW ke liye)	✅ Haan	DNS banane ke liye zaroori hai
+Traffic Manager Profile	✅ Haan	Global routing ke liye
+Endpoints in TM Profile	✅ Haan	TM tabhi kaam karega jab usme endpoints diye hon
+🔧 Alternative:
+
+Agar tumhare paas already public IP hai VMs pe (jo best practice nahi hai), to bina App Gateway bhi TM bana sakte ho. Par generally:
+
+🔒 Best Practice:
+App Gateway + Public IP + Private VMs
+⬇
+Traffic Manager → App Gateway DNS names
+
+
+
+        ⚙️ Architecture Overview:
+        User
+        |
+        v
+        Azure Traffic Manager (DNS-based)
+        |-------------------------|
+        |                         |
+        App Gateway (Region1)    App Gateway (Region2)
+        |                         |
+        VM1 (Private IP)         VM2 (Private IP)

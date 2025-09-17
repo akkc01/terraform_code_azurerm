@@ -1,17 +1,3 @@
-variable "vnet_name" {
-  description = "The name of the virtual network"
-  type        = string
-}
-variable "location" {
-  description = "The location of the virtual network"
-  type        = string
-  default     = "West Europe"
-}
-variable "rg_name" {
-  description = "The name of the resource group"
-  type        = string
-}
-variable "address_space" {
-  description = "The address space used by the virtual network"
-  type        = list(string)
-}
+variable "rg_name" {}
+variable "appgw_pip1" {}
+variable "appgw_pip2" {}

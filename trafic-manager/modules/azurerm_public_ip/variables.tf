@@ -40,3 +40,4 @@ variable "appgw_pip_name" {
   type        = string
   
 }
+variable "domain_name_label" {}

@@ -24,10 +24,10 @@ resource "azurerm_application_gateway" "appgw" {
     port = 80
   }
 
-#  frontend_port {
-#     name = var.frontend_port_name 
-#     port = 8080
-#   }
+ frontend_port {
+    name = httpsport443 
+    port = 443
+  }
 
   frontend_ip_configuration {
     name                 = var.frontend_ip_configuration_name 
@@ -38,31 +38,22 @@ resource "azurerm_application_gateway" "appgw" {
     name         = var.backend_address_pool_name1 
      # address ya VMSS id yahan specify karni padegi (agar dynamic ho to via backend_address)
   }
-# # for second website hosting-------------------
-  # backend_address_pool {
-  #   name         = var.backend_address_pool_name2 
-  #   # address ya VMSS id yahan specify karni padegi (agar dynamic ho to via backend_address)
-  # }
 
   backend_http_settings {
     name                                = var.http_setting_name1
     protocol                            = "Http"
     port                                = 80
-    cookie_based_affinity               = "Disabled"
+    cookie_based_affinity               = "Enable"
     request_timeout                     = 30
   }
-# for second website hosting-------------------
-  # backend_http_settings {
-  #   name                                = var.http_setting_name2
-  #   protocol                            = "Http"
-  #   port                                = 80
-  #   cookie_based_affinity               = "Disabled"
-  #   request_timeout                     = 30
-  # }
 
-
-
-
+  backend_http_settings {
+    name                                = "httpsSetting11"
+    protocol                            = "Https"
+    port                                = 443
+    cookie_based_affinity               = "Enable"
+    request_timeout                     = 30
+  }
 
   http_listener {
     name                           = var.http_listener_name1 
@@ -72,14 +63,14 @@ resource "azurerm_application_gateway" "appgw" {
     #host_name                      = "site1.example.com"  # 👈 Yeh multi-site banata hai
   }
 
-# for second website hosting-------------------
-  # http_listener {
-  #   name                           = var.http_listener_name2 
-  #   frontend_ip_configuration_name = var.frontend_ip_configuration_name
-  #   frontend_port_name             = var.frontend_port_name
-  #   protocol                       = "Http"
-  #   host_name                      = "site2.example.com"  # 👈 Yeh multi-site banata hai
-  # }
+    http_listener {
+    name                           = "listener_https" 
+    frontend_ip_configuration_name = var.frontend_ip_configuration_name
+    frontend_port_name             = var.frontend_port_name
+    protocol                       = "Https"
+    #host_name                      = "site1.example.com"  # 👈 Yeh multi-site banata hai
+    ssl_certificate_name           = "myssl-cert-https"
+  }
 
 request_routing_rule {
   name                       = var.request_routing_rule_name1
@@ -90,14 +81,19 @@ request_routing_rule {
   priority                   = 10  
 }
 
-## for second website hosting-------------------
-# request_routing_rule {
-#   name                       = var.request_routing_rule_name2
-#   rule_type                  = "Basic"
-#   http_listener_name         = var.http_listener_name2
-#   backend_address_pool_name  = var.backend_address_pool_name2
-#   backend_http_settings_name = var.http_setting_name2
-#   priority                   = 12  
-# }
+request_routing_rule {
+  name                       = "httpsrrrule"
+  rule_type                  = "Basic"
+  http_listener_name         = "listener_https" 
+  backend_address_pool_name  = var.backend_address_pool_name1
+  backend_http_settings_name =  "httpsSetting11"
+  priority                   = 9  
+}
+
+  ssl_certificate {
+    name     = "myssl-cert-https"
+    data     = filebase64("C:/Users/AKKC/Desktop/Shell_Scripting/mycert.pfx")  # 👈 Yahan aapka .pfx file ka path aayega
+    password = var.ssl_cert_password                        # 👈 PFX file ka password
+  }
 
 }

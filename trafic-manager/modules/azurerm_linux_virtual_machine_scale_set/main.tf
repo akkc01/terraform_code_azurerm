@@ -21,18 +21,22 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss1" {
     caching              = "ReadWrite"
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   network_interface {
     name    = "networkinterface1"
     primary = true
 
     ip_configuration {
-      name                                   = "internal"
-      primary                                = true
-      subnet_id                              = data.azurerm_subnet.vmss_sub.id
+      name      = "internal"
+      primary   = true
+      subnet_id = data.azurerm_subnet.vmss_sub.id
       #load_balancer_backend_address_pool_ids = [data.azurerm_lb_backend_address_pool.bepool3.id]
       application_gateway_backend_address_pool_ids = [data.azurerm_application_gateway.appgw.backend_address_pool[0].id]
     }
-    network_security_group_id = data.azurerm_network_security_group.nsg1.id
+    #network_security_group_id = data.azurerm_network_security_group.nsg1.id
   }
   computer_name_prefix   = "vmss"
   overprovision          = true
@@ -142,4 +146,3 @@ resource "azurerm_monitor_autoscale_setting" "autoscale1" {
 # }
 # SETTINGS
 # }
-

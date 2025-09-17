@@ -13,9 +13,4 @@ variable "http_listener_name1" {}
 
 variable "request_routing_rule_name1" {}
 
-# variable "vm1_nic_name" {}
-# variable "vm2_nic_name" {}
-# variable "backend_address_pool_name2"{}
-# variable "request_routing_rule_name2" {}
-# variable "http_setting_name2" {}
-# variable "http_listener_name2" {}
+variable "ssl_cert_password" {}
