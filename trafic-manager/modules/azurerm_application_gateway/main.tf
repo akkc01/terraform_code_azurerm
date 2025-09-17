@@ -25,7 +25,7 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
  frontend_port {
-    name = httpsport443 
+    name = "httpsport443"
     port = 443
   }
 
@@ -43,17 +43,17 @@ resource "azurerm_application_gateway" "appgw" {
     name                                = var.http_setting_name1
     protocol                            = "Http"
     port                                = 80
-    cookie_based_affinity               = "Enable"
+    cookie_based_affinity               = "Enabled"
     request_timeout                     = 30
   }
 
-  backend_http_settings {
-    name                                = "httpsSetting11"
-    protocol                            = "Https"
-    port                                = 443
-    cookie_based_affinity               = "Enable"
-    request_timeout                     = 30
-  }
+  # backend_http_settings {
+  #   name                                = "httpsSetting11"
+  #   protocol                            = "Https"
+  #   port                                = 443
+  #   cookie_based_affinity               = "Enabled"
+  #   request_timeout                     = 30
+  # }
 
   http_listener {
     name                           = var.http_listener_name1 
@@ -66,7 +66,7 @@ resource "azurerm_application_gateway" "appgw" {
     http_listener {
     name                           = "listener_https" 
     frontend_ip_configuration_name = var.frontend_ip_configuration_name
-    frontend_port_name             = var.frontend_port_name
+    frontend_port_name             = "httpsport443"
     protocol                       = "Https"
     #host_name                      = "site1.example.com"  # 👈 Yeh multi-site banata hai
     ssl_certificate_name           = "myssl-cert-https"
@@ -86,13 +86,13 @@ request_routing_rule {
   rule_type                  = "Basic"
   http_listener_name         = "listener_https" 
   backend_address_pool_name  = var.backend_address_pool_name1
-  backend_http_settings_name =  "httpsSetting11"
+  backend_http_settings_name =  var.http_setting_name1
   priority                   = 9  
 }
 
   ssl_certificate {
     name     = "myssl-cert-https"
-    data     = filebase64("C:/Users/AKKC/Desktop/Shell_Scripting/mycert.pfx")  # 👈 Yahan aapka .pfx file ka path aayega
+    data     = filebase64("D:/OneDrive - BRINDAVAN BOTTLER PVT. LTD/Desktop/New folder/mycert.pfx")  # 👈 Yahan aapka .pfx file ka path aayega
     password = var.ssl_cert_password                        # 👈 PFX file ka password
   }
 

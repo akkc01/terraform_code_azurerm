@@ -126,24 +126,24 @@ module "kv1" {
       secret_name = "vmss1-username"
       secret_pass = "vmss1-password"
     }
-    vm2 = {
-      secret_name = "vmss2-username"
-      secret_pass = "vmss2-password"
-    }
+    # vm2 = {
+    #   secret_name = "vmss2-username"
+    #   secret_pass = "vmss2-password"
+    # }
   }
 }
 
 module "kv2" {
-  depends_on = [module.rg2]
+  depends_on = [module.rg2, module.kv1]
   source     = "../../modules/azurerm_key_vault_and_secrets"
   kv_name    = "devkeyvault102"
   rg_name    = module.rg2.rg-name
   location   = "westus"
   vm_secrets = {
-    vm1 = {
-      secret_name = "vmss1-username"
-      secret_pass = "vmss1-password"
-    }
+    # vm1 = {
+    #   secret_name = "vmss1-username"
+    #   secret_pass = "vmss1-password"
+    # }
     vm2 = {
       secret_name = "vmss2-username"
       secret_pass = "vmss2-password"
