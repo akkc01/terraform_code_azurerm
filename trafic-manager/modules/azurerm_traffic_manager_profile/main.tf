@@ -6,12 +6,12 @@ resource "random_string" "azurerm_traffic_manager_profile_name" {
   special = false
 }
 
-resource "random_string" "azurerm_traffic_manager_profile_dns_config_relative_name" {
-  length  = 10
-  upper   = false
-  numeric = false
-  special = false
-}
+# resource "random_string" "azurerm_traffic_manager_profile_dns_config_relative_name" {
+#   length  = 10
+#   upper   = false
+#   numeric = false
+#   special = false
+# }
 
 resource "azurerm_traffic_manager_profile" "profile" {
   name                   = random_string.azurerm_traffic_manager_profile_name.result
@@ -30,12 +30,6 @@ resource "azurerm_traffic_manager_profile" "profile" {
     expected_status_code_ranges = ["200-202", "301-302"]
   }
 
-  #   monitor_config {
-  #   protocol                    = "HTTPS"
-  #   port                        = 443
-  #   path                        = "/"
-  #   expected_status_code_ranges = ["200-202", "301-302"]
-  # }
 }
 
 resource "azurerm_traffic_manager_azure_endpoint" "endpoint1" {
@@ -53,3 +47,4 @@ resource "azurerm_traffic_manager_azure_endpoint" "endpoint2" {
   target_resource_id  = var.appgw_pip2
   weight            = 50
 }
+
