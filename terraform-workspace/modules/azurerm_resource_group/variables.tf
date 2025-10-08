@@ -1,0 +1,10 @@
+variable "resource_group_name" {}
+variable "location" {}
+
+variable "tags" {
+  type    = object({
+    env         = string
+    owner       = string
+    cost_center = string
+  })
+}
