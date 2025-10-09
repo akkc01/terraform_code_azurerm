@@ -1,0 +1,82 @@
+subscription_id = "b398fea1-2f06-4948-924a-121d4ed265b0"
+
+resource_groups = {
+  rg1 = {
+    name       = "rg1"
+    location   = "West Eur ope"
+    managed_by = "tony_stark"
+    tags = {
+      environment = "dev"
+      project     = "jarvis"
+      owner       = "team_stark"
+    }
+  }
+  rg2 = {
+    name       = "rg2"
+    location   = "East US"
+    managed_by = "steve_rogers"
+    tags = {
+      environment = "prod"
+      project     = "vision"
+      owner       = "team_rogers"
+    }
+  }
+}
+
+
+
+stgaccount = {
+  "stgacc1" = {
+    name                     = "stgaccwestus001"
+    resource_group_name      = "rg1"
+    location                 = "West Europe"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    tags = {
+      environment = "dev"
+      project     = "jarvis"
+      owner       = "team_stark"
+    }
+    access_tier                       = "Hot"
+    provisioned_billing_model_version = "V2"
+    cross_tenant_replication_enabled  = false
+    edge_zone                         = "eastus"
+    https_traffic_only_enabled        = true
+    min_tls_version                   = "TLS1_2"
+    shared_access_key_enabled         = true
+    allow_nested_items_to_be_public   = false
+    public_network_access_enabled     = true
+    default_to_oauth_authentication   = false
+    is_hns_enabled                    = true
+    nfsv3_enabled                     = false
+    large_file_share_enabled          = false
+    local_user_enabled                = false
+    queue_encryption_key_type         = "Account"
+    table_encryption_key_type         = "Account"
+    infrastructure_encryption_enabled = false
+    dns_endpoint_type                 = "Standard"
+    sftp_enabled                      = false
+    allowed_copy_scope                = "PrivateLink"
+
+  }
+
+  stg2 = {
+    name                     = "stgacc2eastus002"
+    resource_group_name      = "rg2"
+    location                 = "East US"
+    account_tier             = "Standard"
+    account_replication_type = "GRS"
+    tags = {
+      environment = "prod"
+      project     = "vision"
+      owner       = "team_rogers"
+    }
+  }
+}
+
+
+
+
+
+
+
