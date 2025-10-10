@@ -61,7 +61,7 @@ stgaccount = {
   }
 
   stg2 = {
-    name                     = "stgacc2eastus002"
+    name                     = "stgacceastus002"
     resource_group_name      = "rg2"
     location                 = "East US"
     account_tier             = "Standard"
@@ -74,7 +74,26 @@ stgaccount = {
   }
 }
 
-
+virtual_networks = {
+  vnet1= {
+    name = "vnet1"
+    resource_group_name      = "rg1"
+    location                 = "West Europe"
+    address_space = ["192.168.0.0/21"]
+    subnet={
+    subnet1 = {                       
+      name            = "subnet1"
+      address_prefixes = ["192.168.1.0/24"]
+    }
+  }
+  }
+  vnet2= {
+    name = "vnet1-rg2"
+    resource_group_name      = "rg2"
+    location                 = "West Europe"
+    address_space = ["192.168.0.0/21"]
+  }
+    }
 
 
 

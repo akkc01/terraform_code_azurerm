@@ -8,3 +8,8 @@ module "storage" {
   stgaccount = var.stgaccount
 }
 
+module "virtual_networks"{
+  source = "../modules/azurerm_virtual_network"
+  virtual_networks = var.virtual_networks
+  
+}
