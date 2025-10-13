@@ -1,12 +1,15 @@
 resource "azurerm_storage_account" "stg" {
   for_each = var.stgaccount
 
+ # Required Arguments
   name                              = each.value.name
   resource_group_name               = each.value.resource_group_name
   location                          = each.value.location
-  account_kind                      = each.value.account_kind
   account_tier                      = each.value.account_tier
   account_replication_type          = each.value.account_replication_type
+   
+# Optional Arguments
+  account_kind                      = each.value.account_kind
   tags                              = each.value.tags
   provisioned_billing_model_version = each.value.provisioned_billing_model_version
   cross_tenant_replication_enabled  = each.value.cross_tenant_replication_enabled
@@ -29,12 +32,16 @@ resource "azurerm_storage_account" "stg" {
   allowed_copy_scope                = each.value.allowed_copy_scope
 
 
+# Block Arguments (Optional Arguments)
 
-# Yeh tab theek kaam karega, agar each.value.custom_domain:
-# ✅ Hamesha present hai(matalab ki iska use karunga tab mujhe iski value tfvars me dena hoga)
-# ✅ Uske andar name aur use_subdomain dono fields hain,
-# ✅ Aur yeh block resource/module ke syntax ke according valid hai.
- # yahan mai custom_domain ki baat kar rha hun
+  # Yeh (custom_domain) tab kaam karega without dynamic block, -
+        # -only jab hum custom_domain me sabhi arguments ki value ko tfvars me paas karnege.
+  # ✅ Hamesha present hai(matalab ki iska use karunga tab mujhe iski value tfvars me dena hoga)
+  # ✅ Agar aap custom_domain ki values provide nahi karte:
+           # - Toh Terraform plan/run fail karega with an error like:
+           #     - Error: Unsupported attribute
+           #     - This object does not have an attribute named "custom_domain".
+  # ✅ Aur yeh block resource/module ke syntax ke according valid hai.(jab values paas kareng tab kaam karega)
 
   # custom_domain {
   #   name          = each.value.custom_domain.name
@@ -48,7 +55,6 @@ resource "azurerm_storage_account" "stg" {
       use_subdomain = try(custom_domain.value.use_subdomain, null)
     }
   }
-
 
   # customer_managed_key {
   #   user_assigned_identity_id = each.value.customer_managed_key.user_assigned_identity_id
@@ -362,6 +368,7 @@ resource "azurerm_storage_account" "stg" {
   #   publish_microsoft_endpoints = each.value.routing.publish_microsoft_endpoints
   #   publish_internet_endpoints  = each.value.routing.publish_internet_endpoints
   # }
+
   dynamic "routing" {
     for_each = each.value.routing != null ? [each.value.routing] : []
     content {

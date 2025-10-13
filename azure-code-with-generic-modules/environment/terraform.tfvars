@@ -58,6 +58,7 @@ stgaccount = {
     sftp_enabled                      = false
     allowed_copy_scope                = "PrivateLink"
 
+
   }
 
   stg2 = {

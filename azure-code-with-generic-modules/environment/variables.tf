@@ -13,16 +13,20 @@ variable "resource_groups" {
 variable "stgaccount" {
   description = "A map of storage accounts to create. The key of the map will be used as the storage account identifier."
   type = map(object({
+
+ # Required Arguments
     name                              = string
     resource_group_name               = string
     location                          = string
-    account_kind                      = optional(string)
     account_tier                      = string
     account_replication_type          = string
+
+ # Optional Arguments
+    account_kind                      = optional(string)
     provisioned_billing_model_version = optional(string)
-    tags                              = optional(map(string), {})
+    tags                              = optional(map(string))
     cross_tenant_replication_enabled  = optional(bool)
-    access_tier                       = optional(string, "Hot")
+    access_tier                       = optional(string)
     edge_zone                         = optional(string)
     https_traffic_only_enabled        = optional(bool)
     min_tls_version                   = optional(string)
@@ -41,6 +45,8 @@ variable "stgaccount" {
     sftp_enabled                      = optional(bool)
     dns_endpoint_type                 = optional(string)
 
+
+# Block Arguments (Optional Arguments)
     custom_domain = optional(object({
       name          = string
       use_subdomain = optional(bool)
@@ -180,6 +186,8 @@ variable "stgaccount" {
 
   }))
 }
+
+  
 
 variable "virtual_networks" {
   description = "All the VNets"
