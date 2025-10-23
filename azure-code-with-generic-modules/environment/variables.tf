@@ -189,7 +189,7 @@ variable "stgaccount" {
 
   
 
-variable "virtual_networks" {
+variable "vnets" {
   description = "All the VNets"
   type = map(object({
     name                = string
@@ -237,6 +237,66 @@ variable "virtual_networks" {
 
     encryption = optional(object({
       enforcement = string
+    }))
+  }))
+}
+
+
+variable "pips" {
+  description = "Map of public IP configurations"
+  type = map(object({
+  # Required Arguments
+    name                     = string
+    resource_group_name      = string
+    location                 = string
+    allocation_method        = string
+  # Optional Arguments
+    tags                     = optional(map(string))
+    zones                    = optional(list(string))
+    ddos_protection_mode     = optional(string)
+    ddos_protection_plan_id  = optional(string)
+    domain_name_label        = optional(string)
+    domain_name_label_scope  = optional(string)
+    edge_zone                = optional(string)
+    idle_timeout_in_minutes  = optional(number)
+    ip_tags                  = optional(map(string))
+    ip_version               = optional(string)
+    public_ip_prefix_id      = optional(string)
+    reverse_fqdn             = optional(string)
+    sku                      = optional(string)
+    sku_tier                 = optional(string)
+  }))
+  default = {}
+}
+
+
+variable "nics" {
+  description = "Map of Network Interfaces with configuration details."
+  type = map(object({
+    name                = string
+    location            = string
+    resource_group_name = string
+
+    # Optional arguments
+    auxiliary_mode                 = optional(string)
+    auxiliary_sku                  = optional(string)
+    dns_servers                    = optional(list(string))
+    edge_zone                      = optional(string)
+    ip_forwarding_enabled          = optional(bool)
+    accelerated_networking_enabled = optional(bool)
+    internal_dns_name_label        = optional(string)
+    tags                           = optional(map(string))
+
+    # IP configuration block (required)
+    ip_configuration = list(object({
+      name                                           = string
+      private_ip_address_allocation                  = string
+      gateway_load_balancer_frontend_ip_configuration_id = optional(string)
+      subnet_id                                      = optional(string)
+      private_ip_address_version                     = optional(string)
+      public_ip_address_id                           = optional(string)
+      primary                                        = optional(bool)
+      private_ip_address                             = optional(string)
     }))
   }))
 }

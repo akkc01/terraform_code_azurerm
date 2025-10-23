@@ -3,7 +3,7 @@ subscription_id = "b398fea1-2f06-4948-924a-121d4ed265b0"
 resource_groups = {
   rg1 = {
     name       = "rg1"
-    location   = "West Eur ope"
+    location   = "West Europe"
     managed_by = "tony_stark"
     tags = {
       environment = "dev"
@@ -23,15 +23,13 @@ resource_groups = {
   }
 }
 
-
-
 stgaccount = {
-  "stgacc1" = {
-    name                     = "stgaccwestus001"
-    resource_group_name      = "rg1"
-    location                 = "West Europe"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  stgacc1 = {
+    name                          = "stgaccwestus001"
+    resource_group_name           = "rg1"
+    location                      = "West Europe"
+    account_tier                  = "Standard"
+    account_replication_type      = "LRS"
     tags = {
       environment = "dev"
       project     = "jarvis"
@@ -55,10 +53,8 @@ stgaccount = {
     table_encryption_key_type         = "Account"
     infrastructure_encryption_enabled = false
     dns_endpoint_type                 = "Standard"
-    sftp_enabled                      = false
+    sftp_enabled                     = false
     allowed_copy_scope                = "PrivateLink"
-
-
   }
 
   stg2 = {
@@ -75,28 +71,89 @@ stgaccount = {
   }
 }
 
-virtual_networks = {
-  vnet1= {
-    name = "vnet1"
-    resource_group_name      = "rg1"
-    location                 = "West Europe"
-    address_space = ["192.168.0.0/21"]
-    subnet={
-    subnet1 = {                       
-      name            = "subnet1"
-      address_prefixes = ["192.168.1.0/24"]
+vnets = {
+  vnet1 = {
+    name                = "vnet1"
+    resource_group_name = "rg1"
+    location            = "West Europe"
+    address_space       = ["192.168.0.0/21"]
+    subnet = {
+      subnet1 = {
+        name             = "subnet1"
+        address_prefixes = ["192.168.1.0/24"]
+      }
     }
   }
+  vnet2 = {
+    name                = "vnet1-rg2"
+    resource_group_name = "rg2"
+    location            = "West Europe"
+    address_space       = ["192.168.0.0/21"]
   }
-  vnet2= {
-    name = "vnet1-rg2"
-    resource_group_name      = "rg2"
-    location                 = "West Europe"
-    address_space = ["192.168.0.0/21"]
-  }
+}
+
+pips = {
+  pip1 = {
+    name                = "pip1"
+    location            = "West Europe"
+    resource_group_name = "rg1"
+    allocation_method   = "Static"
+    sku                 = "Standard"
+    tags = {
+      environment = "dev"
+      project     = "jarvis"
+      owner       = "team_stark"
     }
+  }
+  pip2 = {
+    name                = "pip2"
+    location            = "East US"
+    resource_group_name = "rg2"
+    allocation_method   = "Dynamic"
+    sku                 = "Basic"
+    tags = {
+      environment = "prod"
+      project     = "vision"
+      owner       = "team_rogers"
+    }
+  }
+}
 
-
-
-
-
+nics = {
+  nic1 = {
+    name                = "nic1"
+    location            = "West Europe"
+    resource_group_name = "rg1"
+    ip_configuration = [
+      {
+        name                          = "ipconfig1"
+        private_ip_address_allocation = "Dynamic"
+      }
+    ]
+    subnet_key = "subnet1"
+    pip_key    = "pip1"
+    tags = {
+      environment = "dev"
+      project     = "jarvis"
+      owner       = "team_stark"
+    }
+  }
+  nic2 = {
+    name                = "nic2"
+    location            = "East US"
+    resource_group_name = "rg2"
+    ip_configuration = [
+      {
+        name                          = "ipconfig1"
+        private_ip_address_allocation = "Dynamic"
+      }
+    ]
+    subnet_key = "subnet2"
+    pip_key    = "pip2"
+    tags = {
+      environment = "prod"
+      project     = "vision"
+      owner       = "team_rogers"
+    }
+  }
+}
