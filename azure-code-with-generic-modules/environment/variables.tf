@@ -14,14 +14,14 @@ variable "stgaccount" {
   description = "A map of storage accounts to create. The key of the map will be used as the storage account identifier."
   type = map(object({
 
- # Required Arguments
-    name                              = string
-    resource_group_name               = string
-    location                          = string
-    account_tier                      = string
-    account_replication_type          = string
+    # Required Arguments
+    name                     = string
+    resource_group_name      = string
+    location                 = string
+    account_tier             = string
+    account_replication_type = string
 
- # Optional Arguments
+    # Optional Arguments
     account_kind                      = optional(string)
     provisioned_billing_model_version = optional(string)
     tags                              = optional(map(string))
@@ -46,7 +46,7 @@ variable "stgaccount" {
     dns_endpoint_type                 = optional(string)
 
 
-# Block Arguments (Optional Arguments)
+    # Block Arguments (Optional Arguments)
     custom_domain = optional(object({
       name          = string
       use_subdomain = optional(bool)
@@ -133,8 +133,8 @@ variable "stgaccount" {
         days = number
       }))
       smb = optional(object({
-        versions               = list(string)
-        authentication_types = list(string)
+        versions                        = list(string)
+        authentication_types            = list(string)
         kerberos_ticket_encryption_type = string
         channel_encryption_type         = string
         multichannel_enabled            = bool
@@ -167,7 +167,7 @@ variable "stgaccount" {
     )
 
     routing = optional(object({
-      choice              = string
+      choice                      = string
       publish_microsoft_endpoints = bool
       publish_internet_endpoints  = bool
     }))
@@ -175,19 +175,19 @@ variable "stgaccount" {
     immutability_policy = optional(object({
       state                         = string
       allow_protected_append_writes = bool
-      period_since_creation_in_days  = number
+      period_since_creation_in_days = number
     }))
 
     sas_policy = optional(object({
-      expiration_period=string
-      expiration_action=string
+      expiration_period = string
+      expiration_action = string
 
     }))
 
   }))
 }
 
-  
+
 
 variable "vnets" {
   description = "All the VNets"
@@ -245,26 +245,26 @@ variable "vnets" {
 variable "pips" {
   description = "Map of public IP configurations"
   type = map(object({
-  # Required Arguments
-    name                     = string
-    resource_group_name      = string
-    location                 = string
-    allocation_method        = string
-  # Optional Arguments
-    tags                     = optional(map(string))
-    zones                    = optional(list(string))
-    ddos_protection_mode     = optional(string)
-    ddos_protection_plan_id  = optional(string)
-    domain_name_label        = optional(string)
-    domain_name_label_scope  = optional(string)
-    edge_zone                = optional(string)
-    idle_timeout_in_minutes  = optional(number)
-    ip_tags                  = optional(map(string))
-    ip_version               = optional(string)
-    public_ip_prefix_id      = optional(string)
-    reverse_fqdn             = optional(string)
-    sku                      = optional(string)
-    sku_tier                 = optional(string)
+    # Required Arguments
+    name                = string
+    resource_group_name = string
+    location            = string
+    allocation_method   = string
+    # Optional Arguments
+    tags                    = optional(map(string))
+    zones                   = optional(list(string))
+    ddos_protection_mode    = optional(string)
+    ddos_protection_plan_id = optional(string)
+    domain_name_label       = optional(string)
+    domain_name_label_scope = optional(string)
+    edge_zone               = optional(string)
+    idle_timeout_in_minutes = optional(number)
+    ip_tags                 = optional(map(string))
+    ip_version              = optional(string)
+    public_ip_prefix_id     = optional(string)
+    reverse_fqdn            = optional(string)
+    sku                     = optional(string)
+    sku_tier                = optional(string)
   }))
   default = {}
 }
@@ -289,14 +289,19 @@ variable "nics" {
 
     # IP configuration block (required)
     ip_configuration = list(object({
-      name                                           = string
-      private_ip_address_allocation                  = string
+      name                                               = string
+      private_ip_address_allocation                      = string
       gateway_load_balancer_frontend_ip_configuration_id = optional(string)
-      subnet_id                                      = optional(string)
-      private_ip_address_version                     = optional(string)
-      public_ip_address_id                           = optional(string)
-      primary                                        = optional(bool)
-      private_ip_address                             = optional(string)
+      subnet_id                                          = optional(string)
+      private_ip_address_version                         = optional(string)
+      public_ip_address_id                               = optional(string)
+      primary                                            = optional(bool)
+      private_ip_address                                 = optional(string)
+    # it will define which subnet and pip to use from tfvars
+      subnet_key                                         = optional(string)
+      pip_key                                            = optional(string)
     }))
   }))
 }
+
+

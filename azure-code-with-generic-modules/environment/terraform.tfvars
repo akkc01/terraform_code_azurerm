@@ -25,11 +25,11 @@ resource_groups = {
 
 stgaccount = {
   stgacc1 = {
-    name                          = "stgaccwestus001"
-    resource_group_name           = "rg1"
-    location                      = "West Europe"
-    account_tier                  = "Standard"
-    account_replication_type      = "LRS"
+    name                     = "stgaccwestus001"
+    resource_group_name      = "rg1"
+    location                 = "West Europe"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
     tags = {
       environment = "dev"
       project     = "jarvis"
@@ -53,7 +53,7 @@ stgaccount = {
     table_encryption_key_type         = "Account"
     infrastructure_encryption_enabled = false
     dns_endpoint_type                 = "Standard"
-    sftp_enabled                     = false
+    sftp_enabled                      = false
     allowed_copy_scope                = "PrivateLink"
   }
 
@@ -128,10 +128,11 @@ nics = {
       {
         name                          = "ipconfig1"
         private_ip_address_allocation = "Dynamic"
+        subnet_key                    = "subnet1"
+        pip_key                       = "pip1"
       }
     ]
-    subnet_key = "subnet1"
-    pip_key    = "pip1"
+
     tags = {
       environment = "dev"
       project     = "jarvis"
@@ -146,10 +147,11 @@ nics = {
       {
         name                          = "ipconfig1"
         private_ip_address_allocation = "Dynamic"
+        subnet_key                    = "subnet2"
+        pip_key                       = "pip2"
       }
     ]
-    subnet_key = "subnet2"
-    pip_key    = "pip2"
+
     tags = {
       environment = "prod"
       project     = "vision"
