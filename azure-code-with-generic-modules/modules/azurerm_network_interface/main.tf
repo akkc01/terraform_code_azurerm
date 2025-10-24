@@ -16,7 +16,7 @@ resource "azurerm_network_interface" "nic" {
 
   # Required block: ip_configuration
   dynamic "ip_configuration" {
-    for_each = each.value.ip_configuration  
+    for_each = each.value.ip_configuration != null ? each.value.ip_configuration : []  
     content {
       name                          = ip_configuration.value.name
       private_ip_address_allocation = ip_configuration.value.private_ip_address_allocation

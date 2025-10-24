@@ -1,13 +1,13 @@
 resource "azurerm_network_security_group" "nsg" {
   for_each = var.nsg
 
-  name                = each.key
+  name                = each.value.nsg_name
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
   tags                = each.value.tags
 
   dynamic "security_rule" {
-    for_each = each.value.rules
+    for_each = each.value.security_rule != null ? each.value.security_rule : []
     content {
       name                                       = security_rule.value.name
       priority                                   = security_rule.value.priority

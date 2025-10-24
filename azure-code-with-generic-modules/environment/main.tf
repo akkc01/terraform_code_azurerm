@@ -9,7 +9,6 @@ module "storage" {
   stgaccount = var.stgaccount
 }
 
-
 module "vnet-subnet" {
   depends_on = [ module.rg ]
   source = "../modules/azurerm_virtual_network"
@@ -34,8 +33,8 @@ module "nics" {
           for ip_cfg in nic_val.ip_configuration : merge(
             ip_cfg,
             {
-              subnet_id            = lookup(module.vnet-subnet.subnet_ids, ip_cfg.subnet_key, null)
-              public_ip_address_id = lookup(module.pips.public_ip_ids, ip_cfg.pip_key, null)
+              subnet_id            = lookup(module.vnet-subnet.subnet_ids[ip_cfg.vnet_key][ip_cfg.subnet_key])
+              public_ip_address_id = lookup(module.pips.public_ip_ids, ip_cfg.pip_key)
             }
           )
         ]
@@ -43,3 +42,10 @@ module "nics" {
     )
   }
 }
+
+module "nsg_rules" {
+  depends_on = [ module.rg ]
+  source = "../modules/azurerm_network_security_rule"
+  nsg = var.nsg
+}
+
