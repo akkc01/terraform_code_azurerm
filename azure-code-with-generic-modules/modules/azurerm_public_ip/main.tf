@@ -8,19 +8,19 @@ resource "azurerm_public_ip" "pip" {
   location            = each.value.location
   allocation_method   = each.value.allocation_method
   # Optional Arguments
-  tags                    = each.value.tags
-  zones                   = each.value.zones
-  ddos_protection_mode    = each.value.ddos_protection_mode
-  ddos_protection_plan_id = each.value.ddos_protection_plan_id
-  domain_name_label       = each.value.domain_name_label
-  domain_name_label_scope = each.value.domain_name_label_scope
-  edge_zone               = each.value.edge_zone
-  idle_timeout_in_minutes = each.value.idle_timeout_in_minutes
-  ip_tags                 = each.value.ip_tags
-  ip_version              = each.value.ip_version
-  public_ip_prefix_id     = each.value.public_ip_prefix_id
-  reverse_fqdn            = each.value.reverse_fqdn
-  sku                     = each.value.sku
-  sku_tier                = each.value.sku_tier
+tags                    = lookup(each.value, "tags", {})
+zones                   = lookup(each.value, "zones", null)
+ddos_protection_mode    = lookup(each.value, "ddos_protection_mode", null)
+ddos_protection_plan_id = lookup(each.value, "ddos_protection_plan_id", null)
+domain_name_label       = lookup(each.value, "domain_name_label", null)
+domain_name_label_scope = lookup(each.value, "domain_name_label_scope", null)
+edge_zone               = lookup(each.value, "edge_zone", null)
+idle_timeout_in_minutes = lookup(each.value, "idle_timeout_in_minutes", 4)   # example default 4 mins
+ip_tags                 = lookup(each.value, "ip_tags", null)
+ip_version              = lookup(each.value, "ip_version", "IPv4")           # example default
+public_ip_prefix_id     = lookup(each.value, "public_ip_prefix_id", null)
+reverse_fqdn            = lookup(each.value, "reverse_fqdn", null)
+sku                     = lookup(each.value, "sku", "Standard")              # example default
+sku_tier                = lookup(each.value, "sku_tier", "Basic")           # example default
 
 }
