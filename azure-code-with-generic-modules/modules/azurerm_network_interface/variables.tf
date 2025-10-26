@@ -26,6 +26,7 @@ variable "nics" {
     # it will define which subnet and pip to use from tfvars
       subnet_key                                         = optional(string)
       pip_key                                            = optional(string)
+      vnet_key                                           = optional(string)
     }))
   }))
 }
