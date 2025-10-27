@@ -4,6 +4,7 @@ variable "nsg" {
     nsg_name            = string
     resource_group_name = string
     location            = string
+    rg_key              = string
     tags                = optional(map(string), {})
     security_rule = list(object({
       name                                       = string
@@ -11,6 +12,7 @@ variable "nsg" {
       direction                                  = string
       access                                     = string
       protocol                                   = string
+      # Optional fields inside security_rule
       source_port_range                          = optional(string)
       destination_port_range                     = optional(string)
       source_address_prefix                      = optional(string)
@@ -20,4 +22,10 @@ variable "nsg" {
       destination_application_security_group_ids = optional(list(string))
     }))
   }))
+}
+
+
+variable "rg_names" {
+  description = "Map of RG names from RG module"
+  type        = map(string)
 }

@@ -4,6 +4,7 @@ variable "nics" {
     name                = string
     location            = string
     resource_group_name = string
+    rg_key              = string
     # Optional arguments
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
@@ -23,7 +24,7 @@ variable "nics" {
       public_ip_address_id                               = optional(string)
       primary                                            = optional(bool)
       private_ip_address                                 = optional(string)
-    # it will define which subnet and pip to use from tfvars
+      # it will define which subnet and pip to use from tfvars
       subnet_key                                         = optional(string)
       pip_key                                            = optional(string)
       vnet_key                                           = optional(string)
@@ -32,3 +33,7 @@ variable "nics" {
 }
 
 
+variable "rg_names" {
+  description = "Map of RG names from RG module"
+  type        = map(string)
+}

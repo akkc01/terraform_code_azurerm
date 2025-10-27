@@ -1,7 +1,7 @@
 resource "azurerm_resource_group" "rg" {
   for_each   = var.resource_groups
-  
-  name       = each.value.name
+
+  name       = upper("${each.value.name}-${each.value.location}-${lookup(each.value.tags, "phase", "unknown")}-rg")
   location   = each.value.location
   # managed_by = each.value.managed_by
   # tags       = each.value.tags

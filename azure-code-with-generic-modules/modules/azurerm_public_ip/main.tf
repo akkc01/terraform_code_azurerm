@@ -4,7 +4,7 @@ resource "azurerm_public_ip" "pip" {
 
   # Required Arguments
   name                = each.value.name
-  resource_group_name = each.value.resource_group_name
+  resource_group_name = var.rg_names[each.value.rg_key]
   location            = each.value.location
   allocation_method   = each.value.allocation_method
   # Optional Arguments

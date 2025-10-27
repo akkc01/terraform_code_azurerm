@@ -1,46 +1,46 @@
 resource "azurerm_storage_account" "stg" {
   for_each = var.stgaccount
 
- # Required Arguments
-  name                              = each.value.name
-  resource_group_name               = each.value.resource_group_name
-  location                          = each.value.location
-  account_tier                      = each.value.account_tier
-  account_replication_type          = each.value.account_replication_type
-   
-# Optional Arguments
-  account_kind                      = each.value.account_kind
-  tags                              = each.value.tags
-  provisioned_billing_model_version = each.value.provisioned_billing_model_version
-  cross_tenant_replication_enabled  = each.value.cross_tenant_replication_enabled
-  edge_zone                         = each.value.edge_zone
-  https_traffic_only_enabled        = each.value.https_traffic_only_enabled
-  min_tls_version                   = each.value.min_tls_version
-  shared_access_key_enabled         = each.value.shared_access_key_enabled
-  allow_nested_items_to_be_public   = each.value.allow_nested_items_to_be_public
-  public_network_access_enabled     = each.value.public_network_access_enabled
-  default_to_oauth_authentication   = each.value.default_to_oauth_authentication
-  is_hns_enabled                    = each.value.is_hns_enabled
-  nfsv3_enabled                     = each.value.nfsv3_enabled
-  large_file_share_enabled          = each.value.large_file_share_enabled
-  local_user_enabled                = each.value.local_user_enabled
-  queue_encryption_key_type         = each.value.queue_encryption_key_type
-  table_encryption_key_type         = each.value.table_encryption_key_type
-  infrastructure_encryption_enabled = each.value.infrastructure_encryption_enabled
-  dns_endpoint_type                 = each.value.dns_endpoint_type
-  sftp_enabled                      = each.value.sftp_enabled
-  allowed_copy_scope                = each.value.allowed_copy_scope
+  # Required Arguments
+  name                     = each.value.name
+  resource_group_name      = var.rg_names[each.value.rg_key]
+  location                 = each.value.location
+  account_tier             = each.value.account_tier
+  account_replication_type = each.value.account_replication_type
+
+  # Optional Arguments
+  account_kind                      = try(each.value.account_kind, null)
+  tags                              = try(each.value.tags, null)
+  provisioned_billing_model_version = try(each.value.provisioned_billing_model_version, null)
+  cross_tenant_replication_enabled  = try(each.value.cross_tenant_replication_enabled, null)
+  edge_zone                         = try(each.value.edge_zone, null)
+  https_traffic_only_enabled        = try(each.value.https_traffic_only_enabled, null)
+  min_tls_version                   = try(each.value.min_tls_version, null)
+  shared_access_key_enabled         = try(each.value.shared_access_key_enabled, null)
+  allow_nested_items_to_be_public   = try(each.value.allow_nested_items_to_be_public, null)
+  public_network_access_enabled     = try(each.value.public_network_access_enabled, null)
+  default_to_oauth_authentication   = try(each.value.default_to_oauth_authentication, null)
+  is_hns_enabled                    = try(each.value.is_hns_enabled, null)
+  nfsv3_enabled                     = try(each.value.nfsv3_enabled, null)
+  large_file_share_enabled          = try(each.value.large_file_share_enabled, null)
+  local_user_enabled                = try(each.value.local_user_enabled, null)
+  queue_encryption_key_type         = try(each.value.queue_encryption_key_type, null)
+  table_encryption_key_type         = try(each.value.table_encryption_key_type, null)
+  infrastructure_encryption_enabled = try(each.value.infrastructure_encryption_enabled, null)
+  dns_endpoint_type                 = try(each.value.dns_endpoint_type, null)
+  sftp_enabled                      = try(each.value.sftp_enabled, null)
+  allowed_copy_scope                = try(each.value.allowed_copy_scope, null)
 
 
-# Block Arguments (Optional Arguments)
+  # Block Arguments (Optional Arguments)
 
   # Yeh (custom_domain) tab kaam karega without dynamic block, -
-        # -only jab hum custom_domain me sabhi arguments ki value ko tfvars me paas karnege.
+  # -only jab hum custom_domain me sabhi arguments ki value ko tfvars me paas karnege.
   # ✅ Hamesha present hai(matalab ki iska use karunga tab mujhe iski value tfvars me dena hoga)
   # ✅ Agar aap custom_domain ki values provide nahi karte:
-           # - Toh Terraform plan/run fail karega with an error like:
-           #     - Error: Unsupported attribute
-           #     - This object does not have an attribute named "custom_domain".
+  # - Toh Terraform plan/run fail karega with an error like:
+  #     - Error: Unsupported attribute
+  #     - This object does not have an attribute named "custom_domain".
   # ✅ Aur yeh block resource/module ke syntax ke according valid hai.(jab values paas kareng tab kaam karega)
 
   # custom_domain {
@@ -56,12 +56,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # customer_managed_key {
-  #   user_assigned_identity_id = each.value.customer_managed_key.user_assigned_identity_id
-  #   key_vault_key_id          = each.value.customer_managed_key.key_vault_key_id
-  #   managed_hsm_key_id        = each.value.customer_managed_key.managed_hsm_key_id
-  # }
-
   dynamic "customer_managed_key" {
     for_each = each.value.customer_managed_key != null ? [each.value.customer_managed_key] : []
     content {
@@ -71,10 +65,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # identity {
-  #   type         = each.value.identity.type
-  #   identity_ids = each.value.identity.identity_ids
-  # }
 
   dynamic "identity" {
     for_each = each.value.identity != null ? [each.value.identity] : []
@@ -84,29 +74,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # blob_properties {
-  #   cors_rule {
-  #     allowed_headers    = each.value.blob_properties.cors_rule[*].allowed_headers
-  #     allowed_methods    = each.value.blob_properties.cors_rule[*].allowed_methods
-  #     allowed_origins    = each.value.blob_properties.cors_rule[*].allowed_origins
-  #     exposed_headers    = each.value.blob_properties.cors_rule[*].exposed_headers
-  #     max_age_in_seconds = each.value.blob_properties.cors_rule[*].max_age_in_seconds
-  #   }
-  #   delete_retention_policy {
-  #     days = each.value.blob_properties.delete_retention_policy.days
-  #   }
-  #   restore_policy {
-  #     days = each.value.blob_properties.restore_policy.days
-  #   }
-  #   versioning_enabled            = each.value.blob_properties.versioning_enabled
-  #   change_feed_enabled           = each.value.blob_properties.change_feed_enabled
-  #   change_feed_retention_in_days = each.value.blob_properties.change_feed_retention_in_days
-  #   default_service_version       = each.value.blob_properties.default_service_version
-  #   last_access_time_enabled      = each.value.blob_properties.last_access_time_enabled
-  #   container_delete_retention_policy {
-  #     days = each.value.blob_properties.container_delete_retention_policy.days
-  #   }
-  # }
 
   dynamic "blob_properties" {
     for_each = each.value.blob_properties != null ? [each.value.blob_properties] : []
@@ -151,35 +118,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-
-  # queue_properties {
-  #   cors_rule {
-  #     allowed_headers    = each.value.queue_properties.cors_rule[*].allowed_headers
-  #     allowed_methods    = each.value.queue_properties.cors_rule[*].allowed_methods
-  #     allowed_origins    = each.value.queue_properties.cors_rule[*].allowed_origins
-  #     exposed_headers    = each.value.queue_properties.cors_rule[*].exposed_headers
-  #     max_age_in_seconds = each.value.queue_properties.cors_rule[*].max_age_in_seconds
-  #   }
-  #   logging {
-  #     delete                = each.value.queue_properties.logging.delete
-  #     read                  = each.value.queue_properties.logging.read
-  #     write                 = each.value.queue_properties.logging.write
-  #     version               = each.value.queue_properties.logging.version
-  #     retention_policy_days = each.value.queue_properties.logging.retention_policy_days
-  #   }
-  #   hour_metrics {
-  #     enabled               = each.value.queue_properties.hour_metrics.enabled
-  #     version               = each.value.queue_properties.hour_metrics.version
-  #     include_apis          = each.value.queue_properties.hour_metrics.include_apis
-  #     retention_policy_days = each.value.queue_properties.hour_metrics.retention_policy_days
-  #   }
-  #   minute_metrics {
-  #     enabled               = each.value.queue_properties.minute_metrics.enabled
-  #     version               = each.value.queue_properties.minute_metrics.version
-  #     include_apis          = each.value.queue_properties.minute_metrics.include_apis
-  #     retention_policy_days = each.value.queue_properties.minute_metrics.retention_policy_days
-  #   }
-  # }
 
   dynamic "queue_properties" {
     for_each = each.value.queue_properties != null ? [each.value.queue_properties] : []
@@ -230,11 +168,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # static_website {
-  #   index_document     = each.value.static_website.index_document
-  #   error_404_document = each.value.static_website.error_404_document
-  # }
-
   dynamic "static_website" {
     for_each = each.value.static_website != null ? [each.value.static_website] : []
     content {
@@ -243,26 +176,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-
-  # share_properties {
-  #   cors_rule {
-  #     allowed_headers    = each.value.share_properties.cors_rule[*].allowed_headers
-  #     allowed_methods    = each.value.share_properties.cors_rule[*].allowed_methods
-  #     allowed_origins    = each.value.share_properties.cors_rule[*].allowed_origins
-  #     exposed_headers    = each.value.share_properties.cors_rule[*].exposed_headers
-  #     max_age_in_seconds = each.value.share_properties.cors_rule[*].max_age_in_seconds
-  #   }
-  #   retention_policy {
-  #     days = each.value.share_properties.retention_policy.days
-  #   }
-  #   smb {
-  #     versions                        = each.value.share_properties.smb.versions
-  #     authentication_types            = each.value.share_properties.smb.authentication_types
-  #     kerberos_ticket_encryption_type = each.value.share_properties.smb.kerberos_ticket_encryption_type
-  #     channel_encryption_type         = each.value.share_properties.smb.channel_encryption_type
-  #     multichannel_enabled            = each.value.share_properties.smb.multichannel_enabled
-  #   }
-  # }
 
   dynamic "share_properties" {
     for_each = each.value.share_properties != null ? [each.value.share_properties] : []
@@ -300,17 +213,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # network_rules {
-  #   default_action             = each.value.network_rules.default_action
-  #   bypass                     = each.value.network_rules.bypass
-  #   virtual_network_subnet_ids = each.value.network_rules.virtual_network_subnet_ids
-  #   ip_rules                   = each.value.network_rules.ip_rules
-  #   private_link_access {
-  #     endpoint_resource_id = each.value.network_rules.private_link_access.endpoint_resource_id
-  #     endpoint_tenant_id   = each.value.network_rules.private_link_access.endpoint_tenant_id
-  #   }
-  # }
-
   dynamic "network_rules" {
     for_each = each.value.network_rules != null ? [each.value.network_rules] : []
     content {
@@ -328,20 +230,6 @@ resource "azurerm_storage_account" "stg" {
       }
     }
   }
-
-  # azure_files_authentication {
-  #   directory_type                 = each.value.azure_files_authentication.directory_type
-  #   default_share_level_permission = each.value.azure_files_authentication.default_share_level_permission
-  #   active_directory {
-  #     domain_name         = each.value.azure_files_authentication.active_directory.domain_name
-  #     netbios_domain_name = each.value.azure_files_authentication.active_directory.netbios_domain_name
-  #     forest_name         = each.value.azure_files_authentication.active_directory.forest_name
-  #     domain_guid         = each.value.azure_files_authentication.active_directory.domain_guid
-  #     domain_sid          = each.value.azure_files_authentication.active_directory.domain_sid
-  #     storage_sid         = each.value.azure_files_authentication.active_directory.storage_sid
-  #   }
-
-  # }
 
   dynamic "azure_files_authentication" {
     for_each = each.value.azure_files_authentication != null ? [each.value.azure_files_authentication] : []
@@ -363,12 +251,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  # routing {
-  #   choice                      = each.value.routing.choice
-  #   publish_microsoft_endpoints = each.value.routing.publish_microsoft_endpoints
-  #   publish_internet_endpoints  = each.value.routing.publish_internet_endpoints
-  # }
-
   dynamic "routing" {
     for_each = each.value.routing != null ? [each.value.routing] : []
     content {
@@ -377,13 +259,6 @@ resource "azurerm_storage_account" "stg" {
       publish_internet_endpoints  = try(routing.value.publish_internet_endpoints, null)
     }
   }
-
-
-  # immutability_policy {
-  #   state                         = each.value.immutability_policy.state
-  #   allow_protected_append_writes = each.value.immutability_policy.allow_protected_append_writes
-  #   period_since_creation_in_days = each.value.immutability_policy.period_since_creation_in_days
-  # }
 
   dynamic "immutability_policy" {
     for_each = each.value.immutability_policy != null ? [each.value.immutability_policy] : []
@@ -395,22 +270,12 @@ resource "azurerm_storage_account" "stg" {
   }
 
 
-  # sas_policy {
-  #   expiration_action = each.value.sas_policy.expiration_action
-  #   expiration_period = each.value.sas_policy.expiration_period
-  # }
-
-dynamic "sas_policy" {
-  for_each = each.value.sas_policy != null ? [each.value.sas_policy] : []
-  content {
-    expiration_action = try(sas_policy.value.expiration_action, null)
-    expiration_period = try(sas_policy.value.expiration_period, null)
+  dynamic "sas_policy" {
+    for_each = each.value.sas_policy != null ? [each.value.sas_policy] : []
+    content {
+      expiration_action = try(sas_policy.value.expiration_action, null)
+      expiration_period = try(sas_policy.value.expiration_period, null)
+    }
   }
 }
 
-
-
-
-
-}
-  

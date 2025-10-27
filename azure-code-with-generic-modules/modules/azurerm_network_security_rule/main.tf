@@ -3,7 +3,8 @@ resource "azurerm_network_security_group" "nsg" {
 
   name                = each.value.nsg_name
   location            = each.value.location
-  resource_group_name = each.value.resource_group_name
+  resource_group_name = var.rg_names[each.value.rg_key]
+  # Optional fields
   tags                = each.value.tags
 
   dynamic "security_rule" {
@@ -14,13 +15,15 @@ resource "azurerm_network_security_group" "nsg" {
       direction                                  = security_rule.value.direction
       access                                     = security_rule.value.access
       protocol                                   = security_rule.value.protocol
-      source_port_range                          = security_rule.value.source_port_range
-      destination_port_range                     = security_rule.value.destination_port_range
-      source_address_prefix                      = security_rule.value.source_address_prefix
-      destination_address_prefix                 = security_rule.value.destination_address_prefix
-      description                                = security_rule.value.description
-      source_application_security_group_ids      = security_rule.value.source_application_security_group_ids
-      destination_application_security_group_ids = security_rule.value.destination_application_security_group_ids
+      # Optional fields inside security_rule
+      source_port_range                          = try(security_rule.value.source_port_range, null)
+      destination_port_range                     = try(security_rule.value.destination_port_range, null)
+      source_address_prefix                      = try(security_rule.value.source_address_prefix, null)
+      destination_address_prefix                 = try(security_rule.value.destination_address_prefix, null)
+      description                                = try(security_rule.value.description, null)
+      source_application_security_group_ids      = try(security_rule.value.source_application_security_group_ids, null)
+      destination_application_security_group_ids = try(security_rule.value.destination_application_security_group_ids, null)
+
     }
   }
 

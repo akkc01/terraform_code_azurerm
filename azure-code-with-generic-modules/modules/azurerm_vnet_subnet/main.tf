@@ -1,15 +1,20 @@
 resource "azurerm_virtual_network" "vnet" {
   for_each            = var.vnets
+  # Required fields
   name                = each.value.name
   location            = each.value.location
-  resource_group_name = each.value.resource_group_name
-  address_space       = each.value.address_space
-  dns_servers         = each.value.dns_servers
-  bgp_community       = each.value.bgp_community
-  edge_zone           = each.value.edge_zone
-  flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
-  tags                = each.value.tags
+  resource_group_name = var.rg_names[each.value.rg_key]
+  # Optional fields
+  address_space                  = try(each.value.address_space, null)
+  dns_servers                    = try(each.value.dns_servers, null)
+  bgp_community                  = try(each.value.bgp_community, null)
+  edge_zone                      = try(each.value.edge_zone, null)
+  flow_timeout_in_minutes        = try(each.value.flow_timeout_in_minutes, null)
+  tags                           = try(each.value.tags, null)
+  private_endpoint_vnet_policies = try(each.value.private_endpoint_vnet_policies, null)
 
+
+#optional block: ddos_protection_plan
   dynamic "ddos_protection_plan" {
     for_each = each.value.ddos_protection_plan != null ? [each.value.ddos_protection_plan] : []
     content {
@@ -18,6 +23,7 @@ resource "azurerm_virtual_network" "vnet" {
     }
   }
 
+# optional block: ip_address_pool
   dynamic "ip_address_pool" {
     for_each = each.value.ip_address_pool != null ? values(each.value.ip_address_pool) : []
     content {
@@ -26,13 +32,14 @@ resource "azurerm_virtual_network" "vnet" {
     }
   }
 
+# optional block: subnet
   dynamic "subnet" {
     for_each = each.value.subnet != null ? values(each.value.subnet) : []
     content {
-      name                             = subnet.value.name
-      address_prefixes                 = subnet.value.address_prefixes
-      security_group                   = try(subnet.value.security_group, null)
-      default_outbound_access_enabled  = try(subnet.value.default_outbound_access_enabled, null)
+      name                                          = subnet.value.name
+      address_prefixes                              = subnet.value.address_prefixes
+      security_group                                = try(subnet.value.security_group, null)
+      default_outbound_access_enabled               = try(subnet.value.default_outbound_access_enabled, null)
       private_endpoint_network_policies             = try(subnet.value.private_endpoint_network_policies, null)
       private_link_service_network_policies_enabled = try(subnet.value.private_link_service_network_policies_enabled, null)
       route_table_id                                = try(subnet.value.route_table_id, null)
@@ -56,6 +63,7 @@ resource "azurerm_virtual_network" "vnet" {
     }
   }
 
+# optional block: encryption
   dynamic "encryption" {
     for_each = each.value.encryption != null ? [each.value.encryption] : []
     content {

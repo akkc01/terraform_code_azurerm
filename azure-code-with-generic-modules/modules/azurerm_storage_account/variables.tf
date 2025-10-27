@@ -2,14 +2,15 @@ variable "stgaccount" {
   description = "A map of storage accounts to create. The key of the map will be used as the storage account identifier."
   type = map(object({
 
- # Required Arguments
-    name                              = string
-    resource_group_name               = string
-    location                          = string
-    account_tier                      = string
-    account_replication_type          = string
+    # Required Arguments
+    name                     = string
+    resource_group_name      = string
+    location                 = string
+    rg_key                   = string
+    account_tier             = string
+    account_replication_type = string
 
- # Optional Arguments
+    # Optional Arguments
     account_kind                      = optional(string)
     provisioned_billing_model_version = optional(string)
     tags                              = optional(map(string))
@@ -34,7 +35,7 @@ variable "stgaccount" {
     dns_endpoint_type                 = optional(string)
 
 
-# Block Arguments (Optional Arguments)
+    # Block Arguments (Optional Arguments)
     custom_domain = optional(object({
       name          = string
       use_subdomain = optional(bool)
@@ -121,8 +122,8 @@ variable "stgaccount" {
         days = number
       }))
       smb = optional(object({
-        versions               = list(string)
-        authentication_types = list(string)
+        versions                        = list(string)
+        authentication_types            = list(string)
         kerberos_ticket_encryption_type = string
         channel_encryption_type         = string
         multichannel_enabled            = bool
@@ -155,7 +156,7 @@ variable "stgaccount" {
     )
 
     routing = optional(object({
-      choice              = string
+      choice                      = string
       publish_microsoft_endpoints = bool
       publish_internet_endpoints  = bool
     }))
@@ -163,12 +164,12 @@ variable "stgaccount" {
     immutability_policy = optional(object({
       state                         = string
       allow_protected_append_writes = bool
-      period_since_creation_in_days  = number
+      period_since_creation_in_days = number
     }))
 
     sas_policy = optional(object({
-      expiration_period=string
-      expiration_action=string
+      expiration_period = string
+      expiration_action = string
 
     }))
 
@@ -176,5 +177,8 @@ variable "stgaccount" {
 }
 
 
+variable "rg_names" {
+  description = "Map of RG names from RG module"
+  type        = map(string)
+}
 
-  

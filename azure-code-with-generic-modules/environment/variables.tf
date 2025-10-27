@@ -18,6 +18,7 @@ variable "stgaccount" {
     name                     = string
     resource_group_name      = string
     location                 = string
+    rg_key                   = string
     account_tier             = string
     account_replication_type = string
 
@@ -195,6 +196,7 @@ variable "vnets" {
     name                = string
     resource_group_name = string
     location            = string
+    rg_key              = string
     address_space       = optional(list(string))
     dns_servers         = optional(list(string))
     bgp_community       = optional(number)
@@ -249,6 +251,7 @@ variable "pips" {
     name                = string
     resource_group_name = string
     location            = string
+    rg_key              = string
     allocation_method   = string
     # Optional Arguments
     tags                    = optional(map(string))
@@ -276,7 +279,7 @@ variable "nics" {
     name                = string
     location            = string
     resource_group_name = string
-
+    rg_key              = string
     # Optional arguments
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
@@ -297,10 +300,10 @@ variable "nics" {
       public_ip_address_id                               = optional(string)
       primary                                            = optional(bool)
       private_ip_address                                 = optional(string)
-    # it will define which subnet and pip to use from tfvars
-      subnet_key                                         = optional(string)
-      pip_key                                            = optional(string)
-      vnet_key                                           = optional(string)
+      # it will define which subnet and pip to use from tfvars
+      subnet_key = optional(string)
+      pip_key    = optional(string)
+      vnet_key   = optional(string)
     }))
   }))
 }
@@ -312,6 +315,7 @@ variable "nsg" {
     nsg_name            = string
     resource_group_name = string
     location            = string
+    rg_key              = string
     tags                = optional(map(string), {})
     security_rule = list(object({
       name                                       = string
@@ -330,4 +334,55 @@ variable "nsg" {
   }))
 }
 
+variable "virtual_machines" {
+  description = "Map of Linux Virtual Machines to create."
+  type = map(object({
+    name                            = string
+    resource_group_name             = string
+    location                        = string
+    rg_key                          = string
+    nic_key                         = string
+    size                            = string
+    admin_username                  = string
+    disable_password_authentication = optional(bool, true)
+    tags                            = optional(map(string))
+    zone                            = optional(string)
+    encryption_at_host_enabled      = optional(bool, false)
+    priority                        = optional(string, "Regular")
+    eviction_policy                 = optional(string)
+    provision_vm_agent              = optional(bool, true)
+    allow_extension_operations      = optional(bool, true)
+    admin_password                  = optional(string)
+    network_interface_ids           = optional(list(string), [])
 
+    admin_ssh_keys = optional(list(object({
+      username   = string
+      public_key = string
+    })))
+
+    os_disk = object({
+      name                         = optional(string, null)
+      caching                      = optional(string, "ReadWrite")
+      os_disk_storage_account_type = optional(string, "Standard_LRS")
+      disk_size_gb                 = optional(number, null)
+    })
+
+    source_image_reference = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    })
+  
+    boot_diagnostics = optional(object({
+      storage_account_uri = optional(string)
+    }))
+
+    identity = optional(object({
+      type         = string
+      identity_ids = optional(list(string))
+    }))
+
+
+  }))
+}
