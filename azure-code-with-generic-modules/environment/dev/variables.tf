@@ -188,8 +188,6 @@ variable "stgaccount" {
   }))
 }
 
-
-
 variable "vnets" {
   description = "All the VNets"
   type = map(object({
@@ -243,7 +241,6 @@ variable "vnets" {
   }))
 }
 
-
 variable "pips" {
   description = "Map of public IP configurations"
   type = map(object({
@@ -271,7 +268,6 @@ variable "pips" {
   }))
   default = {}
 }
-
 
 variable "nics" {
   description = "Map of Network Interfaces with configuration details."
@@ -308,7 +304,6 @@ variable "nics" {
   }))
 }
 
-
 variable "nsg" {
   description = "Map of NSGs with their location and rules"
   type = map(object({
@@ -344,6 +339,7 @@ variable "virtual_machines" {
     nic_key                         = string
     size                            = string
     admin_username                  = string
+    admin_password                  = optional(string)
     disable_password_authentication = optional(bool, true)
     tags                            = optional(map(string))
     zone                            = optional(string)
@@ -352,13 +348,31 @@ variable "virtual_machines" {
     eviction_policy                 = optional(string)
     provision_vm_agent              = optional(bool, true)
     allow_extension_operations      = optional(bool, true)
-    admin_password                  = optional(string)
     network_interface_ids           = optional(list(string), [])
-
+    computer_name                   = optional(string)
+    custom_data                     = optional(string)
+    source_image_id                 = optional(string)
     admin_ssh_keys = optional(list(object({
       username   = string
       public_key = string
     })))
+    license_type                  = optional(string)
+    availability_set_id           = optional(string)
+    capacity_reservation_group_id = optional(string)
+    dedicated_host_id             = optional(string)
+    dedicated_host_group_id       = optional(string)
+    disk_controller_type          = optional(string)
+    edge_zone                     = optional(string)
+    max_bid_price                 = optional(number)
+    platform_fault_domain         = optional(number)
+    secure_boot_enabled           = optional(bool)
+    vtpm_enabled                  = optional(bool)
+    virtual_machine_scale_set_id  = optional(string)
+    proximity_placement_group_id  = optional(string)
+    reboot_setting                = optional(string)
+    patch_mode                    = optional(string)
+    patch_assessment_mode         = optional(string)
+
 
     os_disk = object({
       name                         = optional(string, null)
@@ -367,13 +381,13 @@ variable "virtual_machines" {
       disk_size_gb                 = optional(number, null)
     })
 
-    source_image_reference = object({
+    source_image_reference = optional(object({
       publisher = string
       offer     = string
       sku       = string
       version   = string
-    })
-  
+    }))
+
     boot_diagnostics = optional(object({
       storage_account_uri = optional(string)
     }))
@@ -383,6 +397,43 @@ variable "virtual_machines" {
       identity_ids = optional(list(string))
     }))
 
+    additional_capabilities = optional(object({
+      ultra_ssd_enabled   = optional(bool)
+      hibernation_enabled = optional(bool)
+    }))
 
+    termination_notification = optional(object({
+      enabled = bool
+      timeout = optional(string)
+    }))
+
+    os_image_notification = optional(object({
+      timeout = optional(string)
+    }))
+
+    gallery_application = optional(list(object({
+      version_id                                  = string
+      automatic_upgrade_enabled                   = optional(bool)
+      configuration_blob_uri                      = optional(string)
+      order                                       = optional(number)
+      tag                                         = optional(string)
+      treat_failure_as_deployment_failure_enabled = optional(bool)
+    })), [])
+
+    secret = optional(list(object({
+      key_vault_id = string
+      certificate = list(object({
+        url = string
+      }))
+    })), [])
+
+  }))
+}
+
+variable "nic_nsg_map" {
+  description = "Mapping of NICs to NSGs"
+  type = map(object({
+    nic_key = string
+    nsg_key = string
   }))
 }

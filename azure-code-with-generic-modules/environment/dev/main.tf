@@ -1,32 +1,32 @@
 module "rg" {
-  source          = "../modules/azurerm_resource_group"
+  source          = "../../modules/azurerm_resource_group"
   resource_groups = var.resource_groups
 }
 
 module "storage" {
   depends_on = [module.rg]
-  source     = "../modules/azurerm_storage_account"
+  source     = "../../modules/azurerm_storage_account"
   stgaccount = var.stgaccount
   rg_names   = module.rg.names
 }
 
 module "vnet-subnet" {
   depends_on = [module.rg]
-  source     = "../modules/azurerm_vnet_subnet"
+  source     = "../../modules/azurerm_networking/azurerm_vnet_subnet"
   vnets      = var.vnets
   rg_names   = module.rg.names
 }
 
 module "pips" {
   depends_on = [module.rg]
-  source     = "../modules/azurerm_public_ip"
+  source     = "../../modules/azurerm_public_ip"
   pips       = var.pips
   rg_names   = module.rg.names
 }
 
 module "nics" {
   depends_on = [module.rg, module.vnet-subnet, module.pips]
-  source     = "../modules/azurerm_network_interface"
+  source     = "../../modules/azurerm_networking/azurerm_network_interface"
   nics = {
     for nic_key, nic_val in var.nics : nic_key => merge(
       nic_val,
@@ -46,18 +46,17 @@ module "nics" {
   rg_names = module.rg.names
 }
 
-module "nsg_rules" {
+module "nsg" {
   depends_on = [module.rg]
-  source     = "../modules/azurerm_network_security_rule"
+  source     = "../../modules/azurerm_network_security_rule"
   nsg        = var.nsg
   rg_names   = module.rg.names
 
 }
 
-
 module "lvm" {
-  depends_on = [module.rg, module.nics]
-  source     = "../modules/azurerm_virtual_machine/azurerm_linuc_virtual_machine"
+  depends_on = [module.rg, module.nics, module.pips, module.nsg]
+  source     = "../../modules/azurerm_virtual_machine/azurerm_linux_virtual_machine"
   virtual_machines = {
     for vm_key, vm_val in var.virtual_machines : vm_key => merge(
       vm_val,
@@ -70,3 +69,14 @@ module "lvm" {
   }
   rg_names = module.rg.names
 }
+
+
+module "association" {
+  depends_on = [ module.rg, module.nsg, module.nics ]
+  source      = "../../modules/azurerm_nsg_nic_assoc"
+  nic_ids     = module.nics.nic_ids
+  nsg_ids     = module.nsg.nsg_ids
+  nic_nsg_map = var.nic_nsg_map
+}
+
+

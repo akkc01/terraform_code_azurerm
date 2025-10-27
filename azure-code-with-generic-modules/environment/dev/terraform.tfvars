@@ -86,18 +86,6 @@ pips = {
       owner       = "team_stark"
     }
   }
-  # pip2 = {
-  #   name                = "pip2"
-  #   location            = "East US"
-  #   resource_group_name = "rg2"
-  #   allocation_method   = "Dynamic"
-  #   sku                 = "Basic"
-  #   tags = {
-  #     environment = "prod"
-  #     project     = "vision"
-  #     owner       = "team_rogers"
-  #   }
-  # }
 }
 
 nics = {
@@ -146,7 +134,7 @@ nics = {
 }
 
 nsg = {
-  "nsg1" = {
+  nsg1 = {
     nsg_name            = "nsg1"
     location            = "West Europe"
     resource_group_name = ""
@@ -184,6 +172,45 @@ nsg = {
     ]
 
   }
+  nsg2 = {
+    nsg_name            = "nsg1"
+    resource_group_name = ""
+    rg_key              = "rg2"
+    location            = "EastUS"
+    tags = {
+      environment = "dev"
+      project     = "jarvis"
+      owner       = "team_stark"
+    }
+    security_rule = [
+      {
+        name                       = "allow_ssh"
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+        description                = "Allow SSH inbound traffic"
+      },
+      {
+        name                       = "deny_all_outbound"
+        priority                   = 200
+        direction                  = "Outbound"
+        access                     = "Deny"
+        protocol                   = "*"
+        source_port_range          = "*"
+        destination_port_range     = "*"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+        description                = "Deny all outbound traffic"
+      }
+    ]
+
+  }
+
 }
 
 virtual_machines = {
@@ -240,10 +267,9 @@ virtual_machines = {
     admin_username                  = "ubuntu"
     disable_password_authentication = false
     admin_password                  = "ChangeMe123!"
-    encryption_at_host_enabled      = true
+    encryption_at_host_enabled      = false
     priority                        = "Spot"
     eviction_policy                 = "Deallocate"
-
     # network_interface_ids = [
     #   "/subscriptions/xxxx/resourceGroups/rg-example/providers/Microsoft.Network/networkInterfaces/nic-02"
     # ]
@@ -260,9 +286,21 @@ virtual_machines = {
       sku       = "22_04-lts"
       version   = "latest"
     }
+
     tags = {
       environment = "dev"
       owner       = "team-alpha"
     }
+  }
+}
+
+nic_nsg_map = {
+  association1 = {
+    nic_key = "nic1"
+    nsg_key = "nsg1"
+  }
+  association2 = {
+    nic_key = "nic2"
+    nsg_key = "nsg2"
   }
 }

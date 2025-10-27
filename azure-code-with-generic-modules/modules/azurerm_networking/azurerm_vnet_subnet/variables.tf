@@ -12,7 +12,6 @@ variable "vnets" {
     tags                           = optional(map(string))
     edge_zone                      = optional(string)
     flow_timeout_in_minutes        = optional(string)
-
     ddos_protection_plan = optional(object({
       id     = string
       enable = string
