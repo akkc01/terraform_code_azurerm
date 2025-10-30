@@ -1,35 +1,39 @@
-resource "azurerm_network_interface" "nic" {
-  for_each = var.nics
-  # Required arguments
-  name                = each.value.name
-  location            = each.value.location
-  resource_group_name = var.rg_names[each.value.rg_key]
-  # Optional arguments
-  auxiliary_mode                 = try(each.value.auxiliary_mode, null)
-  auxiliary_sku                  = try(each.value.auxiliary_sku, null)
-  dns_servers                    = try(each.value.dns_servers, null)
-  edge_zone                      = try(each.value.edge_zone, null)
-  ip_forwarding_enabled          = try(each.value.ip_forwarding_enabled, null)
-  accelerated_networking_enabled = try(each.value.accelerated_networking_enabled, null)
-  internal_dns_name_label        = try(each.value.internal_dns_name_label, null)
-  tags                           = try(each.value.tags, null)
+resource "azurerm_subnet" "subnet" {
+  for_each = var.subnets
 
+  name                                          = each.value.name
+  resource_group_name                           = var.rg_names[each.value.rg_key]
+  virtual_network_name                          = each.value.virtual_network_name
+  default_outbound_access_enabled               = lookup(each.value, "default_outbound_access_enabled", true)
+  private_endpoint_network_policies             = lookup(each.value, "private_endpoint_network_policies", "Disabled")
+  private_link_service_network_policies_enabled = lookup(each.value, "private_link_service_network_policies_enabled", true)
+  sharing_scope                                 = lookup(each.value, "sharing_scope", null)
+  service_endpoints                             = lookup(each.value, "service_endpoints", null)
+  service_endpoint_policy_ids                   = lookup(each.value, "service_endpoint_policy_ids", null)
 
-  # Required block: ip_configuration
-  dynamic "ip_configuration" {
-    for_each = each.value.ip_configuration != null ? each.value.ip_configuration : []
+  # Exactly one of these should be used
+  address_prefixes = lookup(each.value, "address_prefixes", null)
+
+  dynamic "ip_address_pool" {
+    for_each = each.value.ip_address_pool != null ? [each.value.ip_address_pool] : []
     content {
-      name                          = ip_configuration.value.name
-      private_ip_address_allocation = ip_configuration.value.private_ip_address_allocation
-      subnet_id                     = var.subnet_ids[ip_configuration.value.vnet_key][ip_configuration.value.subnet_key]
-      # Optional fields inside ip_configuration
-      gateway_load_balancer_frontend_ip_configuration_id = try(ip_configuration.value.gateway_load_balancer_frontend_ip_configuration_id, null)
-      private_ip_address_version                         = try(ip_configuration.value.private_ip_address_version, null)
-      public_ip_address_id                               = try(var.pip_ids[ip_configuration.value.pip_key], null)
-      primary                                            = try(ip_configuration.value.primary, false)
-      private_ip_address                                 = try(ip_configuration.value.private_ip_address, null)
+      id                     = ip_address_pool.value.id
+      number_of_ip_addresses = ip_address_pool.value.number_of_ip_addresses
+    }
+  }
 
+  dynamic "delegation" {
+    for_each = each.value.delegation != null ? each.value.delegation : []
+    content {
+      name = delegation.value.name
+
+      dynamic "service_delegation" {
+        for_each = [delegation.value.service_delegation]
+        content {
+          name    = service_delegation.value.name
+          actions = lookup(service_delegation.value, "actions", null)
+        }
+      }
     }
   }
 }
-

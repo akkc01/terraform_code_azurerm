@@ -51,26 +51,48 @@ vnets = {
     location            = "West Europe"
     address_space       = ["192.168.0.0/21"]
     subnet = {
-
       #Key aur Name same rakho for mapping purpose in nic module
-      subnet1 = {
-        name             = "subnet1"
+      frontend_subnet = {
+        name             = "frontend_subnet"
         address_prefixes = ["192.168.1.0/24"]
       }
+      backend_subnet = {
+        name             = "backend_subnet"
+        address_prefixes = ["192.168.2.0/24"]
+      }
+  }
+}
+
+vnet2 = {
+  name                = "vnet1"
+  resource_group_name = ""
+  rg_key              = "rg2"
+  location            = "EastUS"
+  address_space       = ["10.10.0.0/16"]
+  subnet = {
+    subnet1 = {
+      name             = "subnet1"
+      address_prefixes = ["10.10.1.0/24"]
     }
   }
-  vnet2 = {
-    name                = "vnet1"
-    resource_group_name = ""
-    rg_key              = "rg2"
-    location            = "EastUS"
-    address_space       = ["10.10.0.0/16"]
-    subnet = {
-      subnet1 = {
-        name             = "subnet1"
-        address_prefixes = ["10.10.1.0/24"]
-      }
-    }
+}
+}
+
+subnets = {
+  frontend = {
+    name                 = "frontend_subnet02"
+    rg_key               = "rg1"
+    resource_group_name  = ""
+    virtual_network_name = "vnet1"
+    address_prefixes     = ["192.168.3.0/24"]
+  }
+
+  backend = {
+    name                 = "backend_subnet02"
+    rg_key               = "rg1"
+    resource_group_name  = ""
+    virtual_network_name = "vnet1"
+    address_prefixes     = ["192.168.4.0/24"]
   }
 }
 
@@ -100,12 +122,12 @@ nics = {
       {
         name                          = "ipconfig1"
         private_ip_address_allocation = "Dynamic"
-        subnet_key                    = "subnet1"
+        subnet_key                    = "frontend_subnet"
         vnet_key                      = "vnet1"
         pip_key                       = "pip1"
+#        subnet_id                     = " " # Leave empty, will be set in module
       }
     ]
-
     tags = {
       environment = "dev"
       project     = "jarvis"
@@ -121,9 +143,10 @@ nics = {
       {
         name                          = "ipconfig1"
         private_ip_address_allocation = "Dynamic"
-        subnet_key                    = "subnet121"
+        subnet_key                   = "subnet1"
         vnet_key                      = "vnet2"
         # pip_key                       = "pip2"
+        #subnet_key = "frontend_subnet"
       }
     ]
 
@@ -133,6 +156,30 @@ nics = {
       owner       = "team_rogers"
     }
   }
+
+  nic3 = {
+    name                = "nic2"
+    location            = "West Europe"
+    resource_group_name = ""
+    rg_key              = "rg1"
+    ip_configuration = [
+      {
+        name                          = "ipconfig2"
+        private_ip_address_allocation = "Dynamic"
+        subnet_key                    = "frontend_subnet"
+        vnet_key                      = "vnet1"
+        #pip_key                       = "pip1"
+#        subnet_id                     = " " # Leave empty, will be set in module
+      }
+    ]
+
+    tags = {
+      environment = "prod"
+      project     = "vision"
+      owner       = "team_rogers"
+    }
+  }
+
 }
 
 nsg = {
@@ -148,15 +195,15 @@ nsg = {
     }
     security_rule = [
       {
-        name                    = "allow_ssh"
-        priority                = 100
-        direction               = "Inbound"
-        access                  = "Allow"
-        protocol                = "Tcp"
-        source_port_range       = "*"                       # keep one side as single (usually *)
+        name              = "allow_ssh"
+        priority          = 100
+        direction         = "Inbound"
+        access            = "Allow"
+        protocol          = "Tcp"
+        source_port_range = "*" # keep one side as single (usually *)
         # destination_port_range  = "22"
         #source_port_ranges      = ["80", "443"]            # Source ports
-        destination_port_ranges = ["8080", "8443", "9000"]  # Destination ports
+        destination_port_ranges = ["8080", "8443", "9000"] # Destination ports
 
         source_address_prefix      = "*"
         destination_address_prefix = "*"

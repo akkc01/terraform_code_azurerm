@@ -21,10 +21,12 @@ resource "azurerm_network_interface" "nic" {
     content {
       name                          = ip_configuration.value.name
       private_ip_address_allocation = ip_configuration.value.private_ip_address_allocation
-      subnet_id                     = var.subnet_ids[ip_configuration.value.subnet_key]
+      # iss case me subnet_key aur subnet name, dono ka naam same hona chahiye----
+      #subnet_id                     = var.subnet_ids[ip_configuration.value.vnet_key][ip_configuration.value.subnet_key]
       # Optional fields inside ip_configuration
       gateway_load_balancer_frontend_ip_configuration_id = try(ip_configuration.value.gateway_load_balancer_frontend_ip_configuration_id, null)
       private_ip_address_version                         = try(ip_configuration.value.private_ip_address_version, null)
+      subnet_id                                          = var.subnet_ids[ip_configuration.value.vnet_key][ip_configuration.value.subnet_key]
       public_ip_address_id                               = try(var.pip_ids[ip_configuration.value.pip_key], null)
       primary                                            = try(ip_configuration.value.primary, false)
       private_ip_address                                 = try(ip_configuration.value.private_ip_address, null)
@@ -33,12 +35,4 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-variable "subnet_ids" {
-  type        = map(map(string))
-  description = "Map of subnet IDs organized by VNet and subnet name"
-}
 
-variable "pip_ids" {
-  type        = map(string)
-  description = "Map of subnet IDs organized by VNet and subnet name"
-}
