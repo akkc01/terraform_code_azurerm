@@ -9,8 +9,6 @@ output "subnet_ids" {
   }
 }
 
-
-
 # output "subnet_ids" {
 #   description = "IDs of all subnets in all VNets"
 #   value = {

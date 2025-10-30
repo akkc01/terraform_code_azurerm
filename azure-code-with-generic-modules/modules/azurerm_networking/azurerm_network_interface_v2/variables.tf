@@ -37,12 +37,3 @@ variable "rg_names" {
   description = "Map of RG names from RG module"
   type        = map(string)
 }
-variable "subnet_ids" {
-  type        = map(map(string))
-  description = "Map of subnet IDs organized by VNet and subnet name"
-}
-
-variable "pip_ids" {
-  type        = map(string)
-  description = "Map of subnet IDs organized by VNet and subnet name"
-}

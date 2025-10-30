@@ -121,7 +121,7 @@ nics = {
         private_ip_address_allocation = "Dynamic"
         subnet_key                    = "subnet1"
         vnet_key                      = "vnet2"
-        #pip_key                       = "pip2"
+        # pip_key                       = "pip2"
       }
     ]
 
@@ -146,13 +146,16 @@ nsg = {
     }
     security_rule = [
       {
-        name                       = "allow_ssh"
-        priority                   = 100
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "22"
+        name                    = "allow_ssh"
+        priority                = 100
+        direction               = "Inbound"
+        access                  = "Allow"
+        protocol                = "Tcp"
+        source_port_range       = "*"                       # keep one side as single (usually *)
+        # destination_port_range  = "22"
+        #source_port_ranges      = ["80", "443"]            # Source ports
+        destination_port_ranges = ["8080", "8443", "9000"]  # Destination ports
+
         source_address_prefix      = "*"
         destination_address_prefix = "*"
         description                = "Allow SSH inbound traffic"

@@ -33,3 +33,12 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+variable "subnet_ids" {
+  type        = map(map(string))
+  description = "Map of subnet IDs organized by VNet and subnet name"
+}
+
+variable "pip_ids" {
+  type        = map(string)
+  description = "Map of subnet IDs organized by VNet and subnet name"
+}

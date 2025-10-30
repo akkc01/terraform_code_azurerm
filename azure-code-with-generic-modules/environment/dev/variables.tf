@@ -320,7 +320,10 @@ variable "nsg" {
       protocol                                   = string
       source_port_range                          = optional(string)
       destination_port_range                     = optional(string)
+      destination_port_ranges                    = optional(list(string))
+      source_port_ranges                         = optional(list(string))
       source_address_prefix                      = optional(string)
+      source_address_prefixes                    = optional(list(string))
       destination_address_prefix                 = optional(string)
       description                                = optional(string)
       source_application_security_group_ids      = optional(list(string))
