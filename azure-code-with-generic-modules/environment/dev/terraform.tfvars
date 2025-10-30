@@ -51,6 +51,8 @@ vnets = {
     location            = "West Europe"
     address_space       = ["192.168.0.0/21"]
     subnet = {
+
+      #Key aur Name same rakho for mapping purpose in nic module
       subnet1 = {
         name             = "subnet1"
         address_prefixes = ["192.168.1.0/24"]
@@ -119,7 +121,7 @@ nics = {
       {
         name                          = "ipconfig1"
         private_ip_address_allocation = "Dynamic"
-        subnet_key                    = "subnet1"
+        subnet_key                    = "subnet121"
         vnet_key                      = "vnet2"
         # pip_key                       = "pip2"
       }
