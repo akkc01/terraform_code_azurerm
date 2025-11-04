@@ -1,7 +1,7 @@
 variable "subnets" {
   description = "Map of subnet configurations to create."
   type = map(object({
-    name                                          = string
+    subnet_name                                          = string
     resource_group_name                           = string
     virtual_network_name                          = string
     default_outbound_access_enabled               = optional(bool, true)

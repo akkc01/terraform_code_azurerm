@@ -1,10 +1,13 @@
-variable "nics" {
+variable "nics_with_data" {
   description = "Map of Network Interfaces with configuration details."
   type = map(object({
-    name                = string
+    nic_name            = string
     location            = string
     resource_group_name = string
-    rg_key              = string
+    rg_key              = string  # rg name fetch karne ke liye  module se
+    pip_name            = string  # data block me public ip ke liye
+    subnet_name         = string  # data block me subnet name ke liye
+    vnet_name           = string  # data block me vnet name ke liye
     # Optional arguments
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
@@ -25,15 +28,15 @@ variable "nics" {
       primary                                            = optional(bool)
       private_ip_address                                 = optional(string)
       # it will define which subnet and pip to use from tfvars
-      subnet_key                                         = optional(string)
-      pip_key                                            = optional(string)
-      vnet_key                                           = optional(string)
+      subnet_key = optional(string)
+      pip_key    = optional(string)
+      vnet_key   = optional(string)
     }))
   }))
 }
 
 
-variable "rg_names" {
+variable "rg_name" {
   description = "Map of RG names from RG module"
   type        = map(string)
 }

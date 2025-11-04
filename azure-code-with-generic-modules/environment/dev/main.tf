@@ -55,47 +55,78 @@ module "pips" {
 #   rg_names = module.rg.names
 # }
 
-module "nics" {
-  depends_on = [module.rg, module.vnet, module.pips]
-  source     = "../../modules/azurerm_networking/azurerm_network_interface_v1.1"
-  nics = var.nics
-  subnet_ids = module.vnet.subnet_ids
-  rg_names = module.rg.names
-  pip_ids = module.pips.public_ip_ids
+# module "nics" {
+#   depends_on = [module.rg, module.vnet, module.pips]
+#   source     = "../../modules/azurerm_networking/azurerm_network_interface_v1.1"
+#   nics = var.nics
+#   subnet_ids = module.vnet.subnet_ids
+#   rg_names = module.rg.names
+#   pip_ids = module.pips.public_ip_ids
+# }
+
+module "nics_with_data" {
+  depends_on     = [module.rg, module.pips, module.subnet, module.vnet]
+  source         = "../../modules/azurerm_networking/azurerm_network_interface_v2"
+  nics_with_data = var.nics_with_data
+  rg_name        = module.rg.names
 }
-
-
 
 module "nsg" {
   depends_on = [module.rg]
-  source     = "../../modules/azurerm_network_security_group"
+  source     = "../../modules/azurerm_security/azurerm_network_security_group"
   nsg        = var.nsg
   rg_names   = module.rg.names
 }
 
-module "lvm" {
-  depends_on = [module.rg, module.nics, module.pips, module.nsg]
-  source     = "../../modules/azurerm_virtual_machine/azurerm_linux_virtual_machine"
-  virtual_machines = {
-    for vm_key, vm_val in var.virtual_machines : vm_key => merge(
-      vm_val,
-      {
-        network_interface_ids = [
-          module.nics.nic_ids[vm_val.nic_key]
-        ]
-      }
-    )
-  }
-  rg_names = module.rg.names
-}
-
-
 module "association" {
-  depends_on = [ module.rg, module.nsg, module.nics ]
+  depends_on  = [module.rg, module.nsg, module.nics_with_data, module.wvm]
   source      = "../../modules/azurerm_nsg_nic_assoc"
-  nic_ids     = module.nics.nic_ids
+  nic_ids     = module.nics_with_data.nic_ids
   nsg_ids     = module.nsg.nsg_ids
   nic_nsg_map = var.nic_nsg_map
 }
 
+module "kv" {
+  depends_on = [module.rg]
+  source     = "../../modules/azurerm_security/azurerm_key_vault"
+  key_vaults = var.key_vaults
+  rg_names   = module.rg.names
+}
+
+module "kvs" {
+  depends_on        = [module.rg, module.kv]
+  source            = "../../modules/azurerm_security/azurerm_key_vault_secret"
+  key_vault_secrets = var.key_vault_secrets
+  rg_names          = module.rg.names
+}
+
+# module "lvm" {
+#   depends_on = [module.rg, module.nics, module.pips, module.nsg]
+#   source     = "../../modules/azurerm_virtual_machine/azurerm_linux_virtual_machine_v1"
+#   virtual_machines = {
+#     for vm_key, vm_val in var.virtual_machines : vm_key => merge(
+#       vm_val,
+#       {
+#         network_interface_ids = [
+#           module.nics.nic_ids[vm_val.nic_key]
+#         ]
+#       }
+#     )
+#   }
+#   rg_names = module.rg.names
+# }
+
+module "lvm" {
+  depends_on = [module.rg, module.nics_with_data, module.pips, module.nsg, module.kv, module.kvs]
+  source     = "../../modules/azurerm_virtual_machine/azurerm_linux_virtual_machine_v2"
+  lvm        = var.lvm
+  rg_names   = module.rg.names
+}
+
+module "wvm" {
+  depends_on = [module.rg, module.nics_with_data, module.pips, module.nsg, module.kv, module.kvs]
+  source     = "../../modules/azurerm_virtual_machine/azurerm_windows_virtual_machine"
+  wvm        = var.wvm
+  rg_name    = module.rg.names
+}
 

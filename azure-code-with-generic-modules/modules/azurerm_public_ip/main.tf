@@ -3,7 +3,7 @@ resource "azurerm_public_ip" "pip" {
   for_each = var.pips
 
   # Required Arguments
-  name                = each.value.name
+  name                = each.value.pip_name
   resource_group_name = var.rg_names[each.value.rg_key]
   location            = each.value.location
   allocation_method   = each.value.allocation_method

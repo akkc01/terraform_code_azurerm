@@ -1,43 +1,32 @@
-resource "azurerm_windows_virtual_machine" "vm" {
-  for_each = var.vms
+resource "azurerm_windows_virtual_machine" "wvm" {
+  for_each              = var.wvm
+  name                  = each.value.vm_name
+  location              = each.value.location
+  resource_group_name   = var.rg_name[each.value.rg_key]
+  size                  = each.value.size
+  admin_username        = data.azurerm_key_vault_secret.vm_username[each.key].value
+  admin_password        = data.azurerm_key_vault_secret.vm_password[each.key].value
+  network_interface_ids = [data.azurerm_network_interface.nic[each.key].id]
 
-  name                = each.key
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = var.global_config.location
-  size                = each.value.size
-  admin_username      = each.value.admin_username
-  admin_password      = each.value.admin_password
-  network_interface_ids = [azurerm_network_interface.nic[each.key].id]
+  dynamic "os_disk" {
+    for_each = each.value.os_disk != null ? [each.value.os_disk] : []
 
-  os_disk {
-    name                 = "${each.key}-osdisk"
-    caching              = "ReadWrite"
-    storage_account_type = each.value.os_disk_storage_account_type
+    content {
+      name                 = lookup(os_disk.value, "name", null)
+      caching              = lookup(os_disk.value, "caching", "ReadWrite")
+      storage_account_type = lookup(os_disk.value, "storage_account_type", "Standard_LRS")
+      disk_size_gb         = lookup(os_disk.value, "disk_size_gb", null)
+    }
   }
 
-  source_image_reference {
-    publisher = each.value.image.publisher
-    offer     = each.value.image.offer
-    sku       = each.value.image.sku
-    version   = each.value.image.version
+  dynamic "source_image_reference" {
+    for_each = each.value.source_image_reference != null ? [each.value.source_image_reference] : []
+
+    content {
+      publisher = source_image_reference.value.publisher
+      offer     = source_image_reference.value.offer
+      sku       = source_image_reference.value.sku
+      version   = source_image_reference.value.version
+    }
   }
-
-  computer_name             = each.key
-  enable_automatic_updates  = try(each.value.enable_automatic_updates, true)
-  provision_vm_agent        = try(each.value.provision_vm_agent, true)
-  allow_extension_operations = try(each.value.allow_extension_operations, true)
-  timezone                  = try(each.value.timezone, "India Standard Time")
-
-  boot_diagnostics {
-    storage_account_uri = try(each.value.boot_diagnostics_storage_uri, null)
-  }
-
-  identity {
-    type = try(each.value.identity_type, "SystemAssigned")
-  }
-
-  tags = merge(
-    var.global_config.tags,
-    try(each.value.tags, {})
-  )
 }

@@ -2,7 +2,7 @@ variable "pips" {
   description = "Map of public IP configurations"
   type = map(object({
     # Required Arguments
-    name                = string
+    pip_name                = string
     resource_group_name = string
     location            = string
     rg_key              = string

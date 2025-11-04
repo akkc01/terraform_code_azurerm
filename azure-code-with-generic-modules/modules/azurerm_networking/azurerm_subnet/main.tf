@@ -1,7 +1,7 @@
 resource "azurerm_subnet" "subnet" {
   for_each = var.subnets
 
-  name                                          = each.value.name
+  name                                          = each.value.subnet_name
   resource_group_name                           = var.rg_names[each.value.rg_key]
   virtual_network_name                          = each.value.virtual_network_name
   default_outbound_access_enabled               = lookup(each.value, "default_outbound_access_enabled", true)

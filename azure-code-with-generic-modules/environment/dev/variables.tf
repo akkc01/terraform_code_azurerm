@@ -241,20 +241,19 @@ variable "vnets" {
   }))
 }
 
-
 variable "subnets" {
   description = "Map of subnet configurations to create."
   type = map(object({
-    name                                          = string
+    subnet_name                                   = string
     resource_group_name                           = string
     virtual_network_name                          = string
-    rg_key                                        = string
     default_outbound_access_enabled               = optional(bool, true)
     private_endpoint_network_policies             = optional(string, "Disabled")
     private_link_service_network_policies_enabled = optional(bool, true)
     sharing_scope                                 = optional(string)
     service_endpoints                             = optional(list(string))
     service_endpoint_policy_ids                   = optional(list(string))
+    rg_key                                        = string
 
     # Either one must be set
     address_prefixes = optional(list(string))
@@ -277,14 +276,11 @@ variable "subnets" {
   }))
 }
 
-
-
-
 variable "pips" {
   description = "Map of public IP configurations"
   type = map(object({
     # Required Arguments
-    name                = string
+    pip_name            = string
     resource_group_name = string
     location            = string
     rg_key              = string
@@ -308,13 +304,52 @@ variable "pips" {
   default = {}
 }
 
-variable "nics" {
+# variable "nics" {
+#   description = "Map of Network Interfaces with configuration details."
+#   type = map(object({
+#     name                = string
+#     location            = string
+#     resource_group_name = string
+#     rg_key              = string
+#     # Optional arguments
+#     auxiliary_mode                 = optional(string)
+#     auxiliary_sku                  = optional(string)
+#     dns_servers                    = optional(list(string))
+#     edge_zone                      = optional(string)
+#     ip_forwarding_enabled          = optional(bool)
+#     accelerated_networking_enabled = optional(bool)
+#     internal_dns_name_label        = optional(string)
+#     tags                           = optional(map(string))
+
+#     # IP configuration block (required)
+#     ip_configuration = list(object({
+#       name                                               = string
+#       private_ip_address_allocation                      = string
+#       gateway_load_balancer_frontend_ip_configuration_id = optional(string)
+#       subnet_id                                          = optional(string)
+#       private_ip_address_version                         = optional(string)
+#       public_ip_address_id                               = optional(string)
+#       primary                                            = optional(bool)
+#       private_ip_address                                 = optional(string)
+#       # it will define which subnet and pip to use from tfvars
+#       #subnet_key = optional(string)
+#       subnet_key = optional(string)
+#       pip_key    = optional(string)
+#       vnet_key   = optional(string)
+#     }))
+#   }))
+# }
+
+variable "nics_with_data" {
   description = "Map of Network Interfaces with configuration details."
   type = map(object({
-    name                = string
+    nic_name            = string
     location            = string
     resource_group_name = string
-    rg_key              = string
+    rg_key              = string # rg name fetch karne ke liye  module se
+    pip_name            = string # data block me public ip ke liye
+    subnet_name         = string # data block me subnet name ke liye
+    vnet_name           = string # data block me vnet name ke liye
     # Optional arguments
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
@@ -324,7 +359,6 @@ variable "nics" {
     accelerated_networking_enabled = optional(bool)
     internal_dns_name_label        = optional(string)
     tags                           = optional(map(string))
-
     # IP configuration block (required)
     ip_configuration = list(object({
       name                                               = string
@@ -336,10 +370,9 @@ variable "nics" {
       primary                                            = optional(bool)
       private_ip_address                                 = optional(string)
       # it will define which subnet and pip to use from tfvars
-      #subnet_key = optional(string)
       subnet_key = optional(string)
-      pip_key     = optional(string)
-      vnet_key    = optional(string)
+      pip_key    = optional(string)
+      vnet_key   = optional(string)
     }))
   }))
 }
@@ -372,17 +405,77 @@ variable "nsg" {
   }))
 }
 
-variable "virtual_machines" {
-  description = "Map of Linux Virtual Machines to create."
+variable "nic_nsg_map" {
+  description = "Mapping of NICs to NSGs"
+  type = map(object({
+    nic_key = string
+    nsg_key = string
+  }))
+}
+
+variable "key_vaults" {
+  description = "Map of Key Vault configurations."
   type = map(object({
     name                            = string
-    resource_group_name             = string
     location                        = string
+    resource_group_name             = string
+    sku_name                        = string
     rg_key                          = string
-    nic_key                         = string
-    size                            = string
-    admin_username                  = string
-    admin_password                  = optional(string)
+    soft_delete_retention_days      = optional(number, 90)
+    purge_protection_enabled        = optional(bool, false)
+    enabled_for_deployment          = optional(bool, false)
+    enabled_for_disk_encryption     = optional(bool, false)
+    enabled_for_template_deployment = optional(bool, false)
+    rbac_authorization_enabled      = optional(bool, false)
+    public_network_access_enabled   = optional(bool, true)
+    tags                            = optional(map(string), {})
+
+    network_acls = optional(object({
+      bypass                     = string
+      default_action             = string
+      ip_rules                   = optional(list(string), [])
+      virtual_network_subnet_ids = optional(list(string), [])
+    }), null)
+
+    access_policies = optional(list(object({
+      # tenant_id               = string
+      # object_id               = string
+      application_id          = optional(string)
+      key_permissions         = optional(list(string), [])
+      secret_permissions      = optional(list(string), [])
+      certificate_permissions = optional(list(string), [])
+      storage_permissions     = optional(list(string), [])
+    })), [])
+  }))
+}
+
+variable "key_vault_secrets" {
+  description = "Map of Key Vault Secret configurations."
+  type = map(object({
+    kv_secret = string
+    kv_value  = string
+    # key_vault_id        = string
+    rg_key              = string
+    kv_name             = string
+    resource_group_name = string
+
+  }))
+}
+
+variable "lvm" {
+  description = "Map of Linux Virtual Machines to create."
+  type = map(object({
+    vm_name             = string
+    resource_group_name = string
+    location            = string
+    rg_key              = string
+    nic_name            = string
+    size                = string
+    kv_name             = string
+    username_secret     = string
+    password_secret     = string
+    # admin_username                  = string
+    # admin_password                  = optional(string)
     disable_password_authentication = optional(bool, true)
     tags                            = optional(map(string))
     zone                            = optional(string)
@@ -473,10 +566,33 @@ variable "virtual_machines" {
   }))
 }
 
-variable "nic_nsg_map" {
-  description = "Mapping of NICs to NSGs"
+variable "wvm" {
+  description = "Configuration for Windows VMs, VNets, Subnets, and NICs"
   type = map(object({
-    nic_key = string
-    nsg_key = string
+    rg_key          = string
+    location        = string
+    kv_name         = string
+    username_secret = string
+    password_secret = string
+    vm_name         = string
+    size            = string
+    nic_name        = string
+
+    os_disk = optional(object({
+      name                 = optional(string)
+      caching              = optional(string)
+      storage_account_type = optional(string)
+      disk_size_gb         = optional(number)
+    }))
+
+    source_image_reference = optional(object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    }))
   }))
 }
+
+
+

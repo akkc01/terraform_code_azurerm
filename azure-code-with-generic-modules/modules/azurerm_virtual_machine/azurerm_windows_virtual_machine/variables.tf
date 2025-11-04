@@ -1,31 +1,34 @@
-variable "vms" {
-  description = "Map of all Windows VMs to deploy"
+variable "wvm" {
+  description = "Configuration for Windows VMs, VNets, Subnets, and NICs"
   type = map(object({
-    # Required
-    size                         = string
-    admin_username               = string
-    admin_password               = string
-    subnet_id                    = string
+    rg_key          = string
+    location        = string
+    kv_name         = string
+    username_secret = string
+    password_secret = string
+    vm_name         = string
+    size            = string
+    nic_name        = string
 
-    # Optional OS Disk config
-    os_disk_storage_account_type = optional(string, "Premium_LRS")
-    # Optional flags and settings
-    enable_automatic_updates   = optional(bool, true)
-    provision_vm_agent         = optional(bool, true)
-    allow_extension_operations = optional(bool, true)
-    timezone                   = optional(string, "India Standard Time")
-    identity_type              = optional(string, "SystemAssigned")
-    boot_diagnostics_storage_uri = optional(string)
-    tags                       = optional(map(string), {})
+    os_disk = optional(object({
+      name                 = optional(string)
+      caching              = optional(string)
+      storage_account_type = optional(string)
+      disk_size_gb         = optional(number)
+    }))
 
-    # Optional Image config
-    image = optional(object({
+    source_image_reference = optional(object({
       publisher = string
       offer     = string
       sku       = string
       version   = string
     }))
-
-
   }))
+}
+
+
+
+variable "rg_name" {
+  description = "Map of RG names from RG module"
+  type        = map(string)
 }
