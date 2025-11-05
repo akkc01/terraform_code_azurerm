@@ -2,7 +2,7 @@ data "azurerm_key_vault" "kv" {
   for_each = var.wvm
 
   name                = each.value.kv_name
-  resource_group_name = var.rg_name[each.value.rg_key]
+  resource_group_name = each.value.kv_rg
 }
 
 # fetch vm useranme

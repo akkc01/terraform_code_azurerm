@@ -79,7 +79,7 @@ module "nsg" {
 }
 
 module "association" {
-  depends_on  = [module.rg, module.nsg, module.nics_with_data, module.wvm]
+  depends_on  = [module.rg, module.nsg, module.nics_with_data]
   source      = "../../modules/azurerm_nsg_nic_assoc"
   nic_ids     = module.nics_with_data.nic_ids
   nsg_ids     = module.nsg.nsg_ids
@@ -124,7 +124,7 @@ module "lvm" {
 }
 
 module "wvm" {
-  depends_on = [module.rg, module.nics_with_data, module.pips, module.nsg, module.kv, module.kvs]
+  depends_on = [module.rg, module.nics_with_data, module.pips, module.nsg, module.kv, module.kvs, module.association, module.lvm]
   source     = "../../modules/azurerm_virtual_machine/azurerm_windows_virtual_machine"
   wvm        = var.wvm
   rg_name    = module.rg.names

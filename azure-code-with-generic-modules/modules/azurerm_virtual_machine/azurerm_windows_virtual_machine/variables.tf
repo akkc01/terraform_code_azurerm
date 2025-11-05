@@ -3,6 +3,7 @@ variable "wvm" {
   type = map(object({
     rg_key          = string
     location        = string
+    kv_rg           = string
     kv_name         = string
     username_secret = string
     password_secret = string
