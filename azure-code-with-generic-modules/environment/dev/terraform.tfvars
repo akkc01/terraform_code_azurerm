@@ -330,7 +330,7 @@ nic_nsg_map = {
 
 key_vaults = {
   kv-dev = {
-    name                            = "dev-keyvault-777"
+    name                            = "dev-keyvault-bbpl"
     location                        = "westus"
     resource_group_name             = ""
     rg_key                          = "rg1"
@@ -363,28 +363,28 @@ key_vault_secrets = {
     kv_secret           = "vm1-username"
     kv_value            = "akkcadmin"
     rg_key              = "rg1"
-    kv_name             = "dev-keyvault-777"
+    kv_name             = "dev-keyvault-bbpl"
     resource_group_name = ""
   }
   "sc2" = {
     kv_secret           = "vm1-password"
     kv_value            = "Devops#4321!"
     rg_key              = "rg1"
-    kv_name             = "dev-keyvault-777"
+    kv_name             = "dev-keyvault-bbpl"
     resource_group_name = ""
   }
   "sc3" = {
     kv_secret           = "sql-username"
     kv_value            = "akkcsqladmin"
     rg_key              = "rg1"
-    kv_name             = "dev-keyvault-777"
+    kv_name             = "dev-keyvault-bbpl"
     resource_group_name = ""
   }
   "sc4" = {
     kv_secret           = "sql-password"
     kv_value            = "Devops#4321!"
     rg_key              = "rg1"
-    kv_name             = "dev-keyvault-777"
+    kv_name             = "dev-keyvault-bbpl"
     resource_group_name = ""
   }
 }
@@ -397,7 +397,7 @@ lvm = {
     location                        = "West Europe"
     size                            = "Standard_B2s"
     nic_name                        = "akkc-nic01"
-    kv_name                         = "dev-keyvault-777"
+    kv_name                         = "dev-keyvault-bbpl"
     username_secret                 = "vm1-username"
     password_secret                 = "vm1-password"
     size                            = "Standard_F2"
@@ -426,7 +426,7 @@ wvm = {
     rg_key          = "rg2"
     vm_name         = "demo-wvm"
     kv_rg           = "PROJECT-JARVIS-WESTUS-FINAL-RG"
-    kv_name         = "dev-keyvault-777"
+    kv_name         = "dev-keyvault-bbpl"
     location        = "CanadaCentral"
     nic_name        = "akkc-nic02"
     size            = "Standard_B1s"
