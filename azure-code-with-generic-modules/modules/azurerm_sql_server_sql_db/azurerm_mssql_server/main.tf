@@ -1,16 +1,3 @@
-data "azurerm_client_config" "current" {}
-
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
-}
-
-resource "azurerm_user_assigned_identity" "example" {
-  name                = "example-admin"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-}
-
 resource "azurerm_mssql_server" "example" {
   name                         = "example-resource"
   resource_group_name          = azurerm_resource_group.example.name
@@ -29,9 +16,6 @@ resource "azurerm_mssql_server" "example" {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.example.id]
   }
-
-  primary_user_assigned_identity_id            = azurerm_user_assigned_identity.example.id
-  transparent_data_encryption_key_vault_key_id = azurerm_key_vault_key.example.id
 }
 
 # Create a key vault with access policies which allow for the current user to get, list, create, delete, update, recover, purge and getRotationPolicy for the key vault key and also add a key vault access policy for the Microsoft Sql Server instance User Managed Identity to get, wrap, and unwrap key(s)
@@ -43,9 +27,7 @@ resource "azurerm_key_vault" "example" {
   tenant_id                   = azurerm_user_assigned_identity.example.tenant_id
   soft_delete_retention_days  = 7
   purge_protection_enabled    = true
-
   sku_name = "standard"
-
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
