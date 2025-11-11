@@ -2,7 +2,6 @@ variable "virtual_machines" {
   description = "Map of Linux Virtual Machines to create."
   type = map(object({
     name                            = string
-    resource_group_name             = string
     location                        = string
     rg_key                          = string
     nic_key                         = string

@@ -3,7 +3,6 @@ variable "nics" {
   type = map(object({
     name                = string
     location            = string
-    resource_group_name = string
     rg_key              = string
     # Optional arguments
     auxiliary_mode                 = optional(string)

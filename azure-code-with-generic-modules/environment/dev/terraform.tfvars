@@ -44,18 +44,16 @@ stgaccount = {
 
 vnets = {
   rg1_vnet1 = {
-    name                = "vnet1"
-    resource_group_name = ""
-    rg_key              = "rg1"
-    location            = "West Europe"
-    address_space       = ["192.168.0.0/21"]
+    name          = "vnet1"
+    rg_key        = "rg1"
+    location      = "West Europe"
+    address_space = ["192.168.0.0/21"]
   }
   rg2_vnet1 = {
-    name                = "vnet1"
-    resource_group_name = ""
-    rg_key              = "rg2"
-    location            = "CanadaCentral"
-    address_space       = ["10.10.0.0/16"]
+    name          = "vnet1"
+    rg_key        = "rg2"
+    location      = "CanadaCentral"
+    address_space = ["10.10.0.0/16"]
     tags = {
       environment = "dev"
       project     = "mark42"
@@ -69,7 +67,6 @@ subnets = {
   frontend = {
     subnet_name          = "akkc-frontend-subnet01"
     rg_key               = "rg1"
-    resource_group_name  = ""
     virtual_network_name = "vnet1"
     address_prefixes     = ["192.168.3.0/24"]
   }
@@ -77,7 +74,6 @@ subnets = {
   backend = {
     subnet_name          = "akkc-backend-subnet01"
     rg_key               = "rg2"
-    resource_group_name  = ""
     virtual_network_name = "vnet1"
     address_prefixes     = ["10.10.1.0/24"]
   }
@@ -98,12 +94,11 @@ pips = {
     }
   }
   rg2_pip1 = {
-    pip_name            = "wvm-akkc-pip01"
-    location            = "CanadaCentral"
-    resource_group_name = ""
-    rg_key              = "rg2"
-    allocation_method   = "Static"
-    sku                 = "Standard"
+    pip_name          = "wvm-akkc-pip01"
+    location          = "CanadaCentral"
+    rg_key            = "rg2"
+    allocation_method = "Static"
+    sku               = "Standard"
     tags = {
       environment = "dev"
       project     = "mark42"
@@ -113,85 +108,14 @@ pips = {
   }
 }
 
-# nics = {
-#   nic1 = {
-#     name                = "nic1"
-#     location            = "West Europe"
-#     resource_group_name = ""
-#     rg_key              = "rg1"
-#     ip_configuration = [
-#       {
-#         name                          = "ipconfig1"
-#         private_ip_address_allocation = "Dynamic"
-#         subnet_key                    = "frontend_subnet"
-#         vnet_key                      = "vnet1"
-#         pip_key                       = "pip1"
-#         #        subnet_id                     = " " # Leave empty, will be set in module
-#       }
-#     ]
-#     tags = {
-#       environment = "dev"
-#       project     = "jarvis"
-#       owner       = "team_stark"
-#     }
-#   }
-#   nic2 = {
-#     name                = "nic1"
-#     resource_group_name = ""
-#     rg_key              = "rg2"
-#     location            = "CanadaCentral"
-#     ip_configuration = [
-#       {
-#         name                          = "ipconfig1"
-#         private_ip_address_allocation = "Dynamic"
-#         subnet_key                    = "subnet1"
-#         vnet_key                      = "vnet2"
-#         # pip_key                       = "pip2"
-#         #subnet_key = "frontend_subnet"
-#       }
-#     ]
-
-#     tags = {
-#       environment = "prod"
-#       project     = "vision"
-#       owner       = "team_rogers"
-#     }
-#   }
-
-#   nic3 = {
-#     name                = "nic2"
-#     location            = "West Europe"
-#     resource_group_name = ""
-#     rg_key              = "rg1"
-#     ip_configuration = [
-#       {
-#         name                          = "ipconfig2"
-#         private_ip_address_allocation = "Dynamic"
-#         subnet_key                    = "frontend_subnet"
-#         vnet_key                      = "vnet1"
-#         #pip_key                       = "pip1"
-#         #        subnet_id                     = " " # Leave empty, will be set in module
-#       }
-#     ]
-
-#     tags = {
-#       environment = "prod"
-#       project     = "vision"
-#       owner       = "team_rogers"
-#     }
-#   }
-
-# }
-
 nics_with_data = {
   nic1 = {
-    nic_name            = "akkc-nic01"
-    resource_group_name = ""
-    rg_key              = "rg1"
-    location            = "West Europe"
-    pip_name            = "akkc-pip01"
-    subnet_name         = "akkc-frontend-subnet01"
-    vnet_name           = "vnet1"
+    nic_name    = "akkc-nic01"
+    rg_key      = "rg1"
+    location    = "West Europe"
+    pip_name    = "akkc-pip01"
+    subnet_name = "akkc-frontend-subnet01"
+    vnet_name   = "vnet1"
     ip_configuration = [{
       name                          = "ipconfig01"
       private_ip_address_allocation = "Dynamic"
@@ -204,13 +128,12 @@ nics_with_data = {
   }
 
   nic2 = {
-    nic_name            = "akkc-nic02"
-    resource_group_name = ""
-    rg_key              = "rg2"
-    location            = "CanadaCentral"
-    pip_name            = "wvm-akkc-pip01"
-    subnet_name         = "akkc-backend-subnet01"
-    vnet_name           = "vnet1"
+    nic_name    = "akkc-nic02"
+    rg_key      = "rg2"
+    location    = "CanadaCentral"
+    pip_name    = "wvm-akkc-pip01"
+    subnet_name = "akkc-backend-subnet01"
+    vnet_name   = "vnet1"
     ip_configuration = [{
       name                          = "ipconfig01"
       private_ip_address_allocation = "Dynamic"
@@ -277,10 +200,9 @@ nsg = {
 
   }
   nsg2 = {
-    nsg_name            = "nsg1"
-    resource_group_name = ""
-    rg_key              = "rg2"
-    location            = "CanadaCentral"
+    nsg_name = "nsg1"
+    rg_key   = "rg2"
+    location = "CanadaCentral"
     tags = {
       environment = "dev"
       project     = "jarvis"
@@ -332,7 +254,6 @@ key_vaults = {
   kv-dev = {
     name                            = "dev-keyvault-bbpl"
     location                        = "westus"
-    resource_group_name             = ""
     rg_key                          = "rg1"
     sku_name                        = "standard"
     soft_delete_retention_days      = 7
@@ -360,32 +281,28 @@ key_vaults = {
 
 key_vault_secrets = {
   "sc1" = {
-    kv_secret           = "vm1-username"
-    kv_value            = "akkcadmin"
-    rg_key              = "rg1"
-    kv_name             = "dev-keyvault-bbpl"
-    resource_group_name = ""
+    kv_secret = "vm1-username"
+    kv_value  = "akkcadmin"
+    rg_key    = "rg1"
+    kv_name   = "dev-keyvault-bbpl"
   }
   "sc2" = {
-    kv_secret           = "vm1-password"
-    kv_value            = "Devops#4321!"
-    rg_key              = "rg1"
-    kv_name             = "dev-keyvault-bbpl"
-    resource_group_name = ""
+    kv_secret = "vm1-password"
+    kv_value  = "Devops#4321!"
+    rg_key    = "rg1"
+    kv_name   = "dev-keyvault-bbpl"
   }
   "sc3" = {
-    kv_secret           = "sql-username"
-    kv_value            = "akkcsqladmin"
-    rg_key              = "rg1"
-    kv_name             = "dev-keyvault-bbpl"
-    resource_group_name = ""
+    kv_secret = "sql-username"
+    kv_value  = "akkcsqladmin"
+    rg_key    = "rg1"
+    kv_name   = "dev-keyvault-bbpl"
   }
   "sc4" = {
-    kv_secret           = "sql-password"
-    kv_value            = "Devops#4321!"
-    rg_key              = "rg1"
-    kv_name             = "dev-keyvault-bbpl"
-    resource_group_name = ""
+    kv_secret = "sql-password"
+    kv_value  = "Devops#4321!"
+    rg_key    = "rg1"
+    kv_name   = "dev-keyvault-bbpl"
   }
 }
 
@@ -446,5 +363,163 @@ wvm = {
       sku       = "2022-datacenter"
       version   = "latest"
     }
+  }
+}
+
+sql_servers = {
+  server1 = {
+    name              = "my-sql-server-001"
+    rg_key            = "rg1"
+    location          = "westus"
+    version           = "12.0"
+    connection_policy = "Default"
+    identity = {
+      type = "SystemAssigned"
+    }
+    tags = {
+      environment = "prod"
+      project     = "jarvis"
+      owner       = "team_stark"
+      phase       = "final"
+    }
+  }
+}
+
+sql_databases = {
+  db1 = {
+    name           = "prod-sqldb"
+    server_name    = "my-sql-server-001"
+    rg_key         = "rg1"
+    location       = "westus"
+    sku_name       = "GP_S_Gen5_2"
+    max_size_gb    = 50
+    license_type   = "BasePrice"
+    collation      = "SQL_Latin1_General_CP1_CI_AS"
+    ledger_enabled = true
+
+    short_term_retention_policy = {
+      retention_days = 14
+    }
+
+    tags = {
+      environment = "production"
+      owner       = "data-team"
+    }
+  }
+
+  db2 = {
+    name           = "dev-sqldb"
+    server_name    = "my-sql-server-001"
+    rg_key         = "rg1"
+    location       = "westus"
+    sku_name       = "S0"
+    max_size_gb    = 5
+    ledger_enabled = false
+    tags = {
+      environment = "dev"
+      owner       = "devops"
+    }
+  }
+}
+
+app_service_plans = {
+  plan1 = {
+    asp_name = "app-service-plan01"
+    location = "East US"
+    sku_tier = "Standard"
+    sku_size = "S1"
+    rg_key   = "rg1"
+  }
+  plan2 = {
+    asp_name = "app-service-plan02"
+    location = "West Europe"
+    sku_tier = "Standard"
+    sku_size = "S1"
+    rg_key   = "rg1"
+  }
+}
+
+app_services = {
+  webapp1 = {
+    app_service_plan_key = "plan1"
+    dotnet_version       = "v4.0"
+    scm_type             = "LocalGit"
+    appservice_name      = "app-service-01"
+    rg_key               = "rg1"
+    asp_name             = "app-service-plan01"
+    app_settings = {
+      "SOME_KEY" = "value1"
+    }
+  }
+  webapp1 = {
+    app_service_plan_key = "plan2"
+    dotnet_version       = "v4.0"
+    scm_type             = "LocalGit"
+    as_name              = "app-service-02"
+    rg_key               = "rg1"
+    asp_name             = "app-service-plan01"
+    app_settings = {
+      "SOME_KEY" = "value2"
+    }
+  }
+}
+
+log_analytics_workspaces = {
+  workspace1 = {
+    law_name          = "workspace01"
+    rg_key            = "rg1"
+    location          = "East US"
+    sku               = "PerGB2018"
+    retention_in_days = 30
+  }
+  workspace2 = {
+    law_name          = "workspace02"
+    rg_key            = "rg1"
+    location          = "West Europe"
+    sku               = "PerGB2018"
+    retention_in_days = 60
+  }
+}
+
+
+container_apps = {
+  app1 = {
+    rg_key             = "rg1"
+    container_app_name = "containerapp01"
+    conappenv_name     = "conappenv-01"
+    revision_mode      = "Single"
+    container = {
+      name   = "frontend"
+      image  = "mcr.microsoft.com/k8se/quickstart:latest"
+      cpu    = 0.25
+      memory = "0.5Gi"
+    }
+  }
+
+  app2 = {
+    rg_key             = "rg1"
+    container_app_name = "containerapp02"
+    revision_mode      = "Single"
+    container = {
+      name   = "backend"
+      image  = "mcr.microsoft.com/dotnet/samples:aspnetapp"
+      cpu    = 0.5
+      memory = "1Gi"
+    }
+  }
+}
+
+container_app_environments = {
+  env1 = {
+    conappenv = "conappenv-01"
+    law_name  = "workspace01"
+    location  = "East US"
+    rg_key    = "rg1"
+  }
+  env2 = {
+    conappenv = "conappenv-02"
+    law_name  = "workspace01"
+    location  = "East US"
+    rg_key    = "rg1"
   }
 }

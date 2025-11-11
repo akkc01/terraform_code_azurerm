@@ -2,7 +2,6 @@ variable "nsg" {
   description = "Map of NSGs with their location and rules"
   type = map(object({
     nsg_name            = string
-    resource_group_name = string
     location            = string
     rg_key              = string
     tags                = optional(map(string), {})

@@ -16,7 +16,6 @@ variable "stgaccount" {
 
     # Required Arguments
     name                     = string
-    resource_group_name      = string
     location                 = string
     rg_key                   = string
     account_tier             = string
@@ -191,13 +190,12 @@ variable "stgaccount" {
 variable "vnets" {
   description = "All the VNets"
   type = map(object({
-    name                = string
-    resource_group_name = string
-    location            = string
-    rg_key              = string
-    address_space       = optional(list(string))
-    dns_servers         = optional(list(string))
-    bgp_community       = optional(number)
+    name          = string
+    location      = string
+    rg_key        = string
+    address_space = optional(list(string))
+    dns_servers   = optional(list(string))
+    bgp_community = optional(number)
 
     ddos_protection_plan = optional(object({
       id     = string
@@ -245,7 +243,6 @@ variable "subnets" {
   description = "Map of subnet configurations to create."
   type = map(object({
     subnet_name                                   = string
-    resource_group_name                           = string
     virtual_network_name                          = string
     default_outbound_access_enabled               = optional(bool, true)
     private_endpoint_network_policies             = optional(string, "Disabled")
@@ -280,11 +277,10 @@ variable "pips" {
   description = "Map of public IP configurations"
   type = map(object({
     # Required Arguments
-    pip_name            = string
-    resource_group_name = string
-    location            = string
-    rg_key              = string
-    allocation_method   = string
+    pip_name          = string
+    location          = string
+    rg_key            = string
+    allocation_method = string
     # Optional Arguments
     tags                    = optional(map(string))
     zones                   = optional(list(string))
@@ -343,13 +339,12 @@ variable "pips" {
 variable "nics_with_data" {
   description = "Map of Network Interfaces with configuration details."
   type = map(object({
-    nic_name            = string
-    location            = string
-    resource_group_name = string
-    rg_key              = string # rg name fetch karne ke liye  module se
-    pip_name            = string # data block me public ip ke liye
-    subnet_name         = string # data block me subnet name ke liye
-    vnet_name           = string # data block me vnet name ke liye
+    nic_name    = string
+    location    = string
+    rg_key      = string # rg name fetch karne ke liye  module se
+    pip_name    = string # data block me public ip ke liye
+    subnet_name = string # data block me subnet name ke liye
+    vnet_name   = string # data block me vnet name ke liye
     # Optional arguments
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
@@ -380,11 +375,10 @@ variable "nics_with_data" {
 variable "nsg" {
   description = "Map of NSGs with their location and rules"
   type = map(object({
-    nsg_name            = string
-    resource_group_name = string
-    location            = string
-    rg_key              = string
-    tags                = optional(map(string), {})
+    nsg_name = string
+    location = string
+    rg_key   = string
+    tags     = optional(map(string), {})
     security_rule = list(object({
       name                                       = string
       priority                                   = number
@@ -418,7 +412,6 @@ variable "key_vaults" {
   type = map(object({
     name                            = string
     location                        = string
-    resource_group_name             = string
     sku_name                        = string
     rg_key                          = string
     soft_delete_retention_days      = optional(number, 90)
@@ -455,9 +448,8 @@ variable "key_vault_secrets" {
     kv_secret = string
     kv_value  = string
     # key_vault_id        = string
-    rg_key              = string
-    kv_name             = string
-    resource_group_name = string
+    rg_key  = string
+    kv_name = string
 
   }))
 }
@@ -465,15 +457,14 @@ variable "key_vault_secrets" {
 variable "lvm" {
   description = "Map of Linux Virtual Machines to create."
   type = map(object({
-    vm_name             = string
-    resource_group_name = string
-    location            = string
-    rg_key              = string
-    nic_name            = string
-    size                = string
-    kv_name             = string
-    username_secret     = string
-    password_secret     = string
+    vm_name         = string
+    location        = string
+    rg_key          = string
+    nic_name        = string
+    size            = string
+    kv_name         = string
+    username_secret = string
+    password_secret = string
     # admin_username                  = string
     # admin_password                  = optional(string)
     disable_password_authentication = optional(bool, true)
@@ -595,5 +586,165 @@ variable "wvm" {
   }))
 }
 
+variable "sql_servers" {
+  description = "Configuration for multiple Azure SQL Servers"
+  type = map(object({
+    name              = string
+    rg_key            = string
+    location          = string
+    version           = string
+    connection_policy = optional(string, "Default")
+    # Optional identity block
+    identity = optional(object({
+      type = string
+    }))
 
+    # Optional threat detection policy block
+    threat_detection_policy = optional(object({
+      state                      = string
+      disabled_alerts            = optional(list(string))
+      email_account_admins       = optional(bool, false)
+      email_addresses            = optional(list(string))
+      retention_days             = optional(number)
+      storage_account_access_key = optional(string)
+      storage_endpoint           = optional(string)
+    }))
+
+    tags = optional(map(string))
+  }))
+}
+
+variable "sql_databases" {
+  description = "Configuration for multiple Azure SQL Databases"
+  type = map(object({
+    # Required
+    name      = string
+    server_id = string
+
+    # Optional
+    auto_pause_delay_in_minutes                                = optional(number)
+    create_mode                                                = optional(string, "Default")
+    creation_source_database_id                                = optional(string)
+    collation                                                  = optional(string)
+    elastic_pool_id                                            = optional(string)
+    enclave_type                                               = optional(string)
+    geo_backup_enabled                                         = optional(bool, true)
+    maintenance_configuration_name                             = optional(string, "SQL_Default")
+    ledger_enabled                                             = optional(bool, false)
+    license_type                                               = optional(string)
+    max_size_gb                                                = optional(number)
+    min_capacity                                               = optional(number)
+    restore_point_in_time                                      = optional(string)
+    recover_database_id                                        = optional(string)
+    recovery_point_id                                          = optional(string)
+    restore_dropped_database_id                                = optional(string)
+    restore_long_term_retention_backup_id                      = optional(string)
+    read_replica_count                                         = optional(number)
+    read_scale                                                 = optional(bool)
+    sample_name                                                = optional(string)
+    sku_name                                                   = optional(string)
+    storage_account_type                                       = optional(string, "Geo")
+    transparent_data_encryption_enabled                        = optional(bool, true)
+    transparent_data_encryption_key_vault_key_id               = optional(string)
+    transparent_data_encryption_key_automatic_rotation_enabled = optional(bool, false)
+    zone_redundant                                             = optional(bool)
+    secondary_type                                             = optional(string, "Geo")
+    tags                                                       = optional(map(string))
+
+    # Optional Nested Blocks
+    import = optional(object({
+      storage_uri                  = string
+      storage_key                  = string
+      storage_key_type             = string
+      administrator_login          = string
+      administrator_login_password = string
+      authentication_type          = string
+      storage_account_id           = optional(string)
+    }))
+
+    threat_detection_policy = optional(object({
+      state                      = optional(string, "Disabled")
+      disabled_alerts            = optional(list(string))
+      email_account_admins       = optional(string, "Disabled")
+      email_addresses            = optional(list(string))
+      retention_days             = optional(number)
+      storage_account_access_key = optional(string)
+      storage_endpoint           = optional(string)
+    }))
+
+    long_term_retention_policy = optional(object({
+      weekly_retention  = optional(string, "PT0S")
+      monthly_retention = optional(string, "PT0S")
+      yearly_retention  = optional(string, "PT0S")
+      week_of_year      = optional(number)
+    }))
+
+    short_term_retention_policy = optional(object({
+      retention_days           = number
+      backup_interval_in_hours = optional(number, 12)
+    }))
+
+    identity = optional(object({
+      type         = string
+      identity_ids = list(string)
+    }))
+  }))
+}
+
+variable "app_service_plans" {
+  type = map(object({
+    asp_name = string
+    location = string
+    sku_tier = string
+    sku_size = string
+    rg_key   = string
+  }))
+}
+
+variable "app_services" {
+  type = map(object({
+    app_service_plan_key = string
+    dotnet_version       = string
+    scm_type             = string
+    asp_name             = string
+    appservice_name      = string
+    rg_key               = string
+    app_settings         = map(string)
+  }))
+}
+
+variable "log_analytics_workspaces" {
+  type = map(object({
+    location          = string
+    sku               = string
+    rg_key            = string
+    retention_in_days = number
+    law_name          = string
+  }))
+}
+
+variable "container_apps" {
+  type = map(object({
+    container_app_name           = string
+    rg_key                       = string
+    container_app_environment_id = string
+    revision_mode                = string
+    conappenv_name               = string
+    container = object({
+      name   = string
+      image  = string
+      cpu    = number
+      memory = string
+    })
+  }))
+}
+
+variable "container_app_environments" {
+  type = map(object({
+    location       = string
+    rg_key         = string
+    conappenv_name = string
+    law_name       = string
+  }))
+}
 

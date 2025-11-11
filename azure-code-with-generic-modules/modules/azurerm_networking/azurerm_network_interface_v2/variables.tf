@@ -3,7 +3,6 @@ variable "nics_with_data" {
   type = map(object({
     nic_name            = string
     location            = string
-    resource_group_name = string
     rg_key              = string  # rg name fetch karne ke liye  module se
     pip_name            = string  # data block me public ip ke liye
     subnet_name         = string  # data block me subnet name ke liye

@@ -6,7 +6,6 @@ variable "key_vault_secrets" {
     #key_vault_id        = string
     rg_key              = string
     kv_name             = string
-    resource_group_name = string
 
   }))
 }

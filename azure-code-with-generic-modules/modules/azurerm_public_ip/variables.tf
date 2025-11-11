@@ -3,7 +3,6 @@ variable "pips" {
   type = map(object({
     # Required Arguments
     pip_name                = string
-    resource_group_name = string
     location            = string
     rg_key              = string
     allocation_method   = string

@@ -4,7 +4,6 @@ variable "stgaccount" {
 
     # Required Arguments
     name                     = string
-    resource_group_name      = string
     location                 = string
     rg_key                   = string
     account_tier             = string

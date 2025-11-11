@@ -17,14 +17,12 @@ module "vnet" {
   rg_names   = module.rg.names
 }
 
-
 module "subnet" {
   depends_on = [module.rg, module.vnet]
   source     = "../../modules/azurerm_networking/azurerm_subnet"
   subnets    = var.subnets
   rg_names   = module.rg.names
 }
-
 
 module "pips" {
   depends_on = [module.rg]
@@ -130,3 +128,47 @@ module "wvm" {
   rg_name    = module.rg.names
 }
 
+module "sqlserver" {
+  depends_on  = [module.rg, module.kv, module.kvs]
+  source      = "../../modules/azurerm_sql_server_sql_db/azurerm_mssql_server"
+  sql_servers = var.sql_servers
+  rg_name     = module.rg.names
+}
+
+module "app_service_plans" {
+  depends_on        = [module.rg]
+  source            = "../../modules/azurerm_app_service_plan"
+  app_service_plans = var.app_service_plans
+  rg_name           = module.rg.names
+}
+
+module "app_services" {
+  depends_on   = [module.rg, module.app_service_plans]
+  source       = "../../modules/azurerm_app_service"
+  app_services = var.app_services
+  rg_name      = module.rg.names
+
+}
+
+module "log_analytics_workspaces" {
+  depends_on               = [module.rg]
+  source                   = "../../modules/azurerm_log_analytics_workspace"
+  log_analytics_workspaces = var.log_analytics_workspaces
+  rg_name                  = module.rg.names
+
+}
+
+module "container_app_environments" {
+  depends_on                 = [module.rg, module.log_analytics_workspaces]
+  source                     = "../../modules/azurerm_container_app/azurerm_container_app_environment"
+  container_app_environments = var.container_app_environments
+  rg_name                    = module.rg.names
+
+}
+
+module "container_app" {
+  depends_on     = [module.rg, module.log_analytics_workspaces]
+  source         = "../../modules/azurerm_container_app/azurerm_container_app"
+  container_apps = var.container_apps
+  rg_name        = module.rg.names
+}

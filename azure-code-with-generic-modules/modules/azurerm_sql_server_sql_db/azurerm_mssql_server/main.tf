@@ -1,77 +1,35 @@
-<<<<<<< HEAD
-data "azurerm_client_config" "current" {}
+resource "azurerm_mssql_server" "sqlserver" {
+  for_each = var.sql_servers
 
-# resource "azurerm_user_assigned_identity" "example" {
-#   name                = "example-admin"
-#   location            = azurerm_resource_group.example.location
-#   resource_group_name = azurerm_resource_group.example.name
-# }
+  name                         = each.value.name
+  resource_group_name          = var.rg_name[each.value.rg_key]
+  location                     = each.value.location
+  version                      = each.value.version
+  administrator_login          = data.azurerm_key_vault_secret.sql_user[each.key].value
+  administrator_login_password = data.azurerm_key_vault_secret.sql_pass[each.key].value
+  connection_policy            = lookup(each.value, "connection_policy", "Default")
 
-=======
->>>>>>> e3e6efd19d04772f6a4942e7e25f3b80749196d3
-resource "azurerm_mssql_server" "example" {
-  name                         = "example-resource"
-  resource_group_name          = azurerm_resource_group.example.name
-  location                     = azurerm_resource_group.example.location
-  version                      = "12.0"
-  administrator_login          = "Example-Administrator"
-  administrator_login_password = "Example_Password!"
-  minimum_tls_version          = "1.2"
-
-  # azuread_administrator {
-  #   login_username = azurerm_user_assigned_identity.example.name
-  #   object_id      = azurerm_user_assigned_identity.example.principal_id
-  # }
-
-<<<<<<< HEAD
-  # identity {
-  #   type         = "UserAssigned"
-  #   identity_ids = [azurerm_user_assigned_identity.example.id]
-  # }
-
-  # primary_user_assigned_identity_id            = azurerm_user_assigned_identity.example.id
-  # transparent_data_encryption_key_vault_key_id = azurerm_key_vault_key.example.id
-}
-=======
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.example.id]
-  }
-}
-
-# Create a key vault with access policies which allow for the current user to get, list, create, delete, update, recover, purge and getRotationPolicy for the key vault key and also add a key vault access policy for the Microsoft Sql Server instance User Managed Identity to get, wrap, and unwrap key(s)
-resource "azurerm_key_vault" "example" {
-  name                        = "mssqltdeexample"
-  location                    = azurerm_resource_group.example.location
-  resource_group_name         = azurerm_resource_group.example.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = azurerm_user_assigned_identity.example.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = true
-  sku_name = "standard"
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = ["Get", "List", "Create", "Delete", "Update", "Recover", "Purge", "GetRotationPolicy"]
+  # Optional: Managed Identity
+  dynamic "identity" {
+    for_each = each.value.identity != null ? [each.value.identity] : []
+    content {
+      type = identity.value.type
+    }
   }
 
-  access_policy {
-    tenant_id = azurerm_user_assigned_identity.example.tenant_id
-    object_id = azurerm_user_assigned_identity.example.principal_id
-
-    key_permissions = ["Get", "WrapKey", "UnwrapKey"]
+  # Optional: Threat Detection Policy
+  dynamic "threat_detection_policy" {
+    for_each = each.value.threat_detection_policy != null ? [each.value.threat_detection_policy] : []
+    content {
+      state                      = threat_detection_policy.value.state
+      disabled_alerts            = lookup(threat_detection_policy.value, "disabled_alerts", null)
+      email_account_admins       = lookup(threat_detection_policy.value, "email_account_admins", false)
+      email_addresses            = lookup(threat_detection_policy.value, "email_addresses", null)
+      retention_days             = lookup(threat_detection_policy.value, "retention_days", null)
+      storage_account_access_key = lookup(threat_detection_policy.value, "storage_account_access_key", null)
+      storage_endpoint           = lookup(threat_detection_policy.value, "storage_endpoint", null)
+    }
   }
+
+  tags = lookup(each.value, "tags", null)
 }
-
-resource "azurerm_key_vault_key" "example" {
-  depends_on = [azurerm_key_vault.example]
-
-  name         = "example-key"
-  key_vault_id = azurerm_key_vault.example.id
-  key_type     = "RSA"
-  key_size     = 2048
-
-  key_opts = ["unwrapKey", "wrapKey"]
-}
->>>>>>> e3e6efd19d04772f6a4942e7e25f3b80749196d3

@@ -3,7 +3,6 @@ variable "key_vaults" {
   type = map(object({
     name                        = string
     location                    = string
-    resource_group_name         = string
     sku_name                    = string
     rg_key                      = string
     soft_delete_retention_days  = optional(number, 90)

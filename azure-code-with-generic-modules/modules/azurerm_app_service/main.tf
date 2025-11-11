@@ -1,9 +1,9 @@
-resource "azurerm_app_service" "example" {
+resource "azurerm_app_service" "appservice" {
   for_each = var.app_services
 
-  name                = "${each.key}-app-service"
+  name                = each.key.appservice_name
   location            = each.value.location
-  resource_group_name = each.value.rg_name
+  resource_group_name = var.rg_name[each.value.rg_key]
 
   # Link with existing App Service Plan (data source)
   app_service_plan_id = data.azurerm_app_service_plan.asp[each.key].id

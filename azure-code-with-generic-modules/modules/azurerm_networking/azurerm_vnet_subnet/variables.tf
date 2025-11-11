@@ -2,7 +2,6 @@ variable "vnets" {
   description = "All the VNets"
   type = map(object({
     name                           = string
-    resource_group_name            = string
     location                       = string
     rg_key                         = string
     address_space                  = optional(list(string))
