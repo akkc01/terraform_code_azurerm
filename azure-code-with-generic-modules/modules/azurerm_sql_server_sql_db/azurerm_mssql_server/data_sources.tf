@@ -2,7 +2,7 @@ data "azurerm_key_vault" "kv" {
   for_each = var.sql_servers
 
   name                = each.value.kv_name
-  resource_group_name = each.value.kv_rg
+  resource_group_name = var.rg_name[each.value.rg_key]
 }
 
 # fetch sql useranme

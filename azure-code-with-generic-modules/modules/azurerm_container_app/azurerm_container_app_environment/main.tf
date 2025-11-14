@@ -4,6 +4,7 @@ resource "azurerm_container_app_environment" "cappenv" {
   name                       = each.value.conappenv_name
   location                   = each.value.location
   resource_group_name          = var.rg_name[each.value.rg_key]
-  log_analytics_workspace_id = data.azurerm.log_analytics_workspace.law[each.key].id
+  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.law[each.key].id
 }
+
 

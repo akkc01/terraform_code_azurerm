@@ -3,7 +3,6 @@ variable "sql_databases" {
   type = map(object({
     # Required
     name       = string
-    server_id  = string
     server_name = string
 
     # Optional
